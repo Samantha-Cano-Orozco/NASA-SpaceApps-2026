@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prueba de hosting | Space Apps</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root { --bg: #14181f; --panel: #1d232d; --text: #e8ecf1; --muted: #9aa5b4; --accent: #e0793c; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { display: flex; flex-direction: column; background: var(--bg); color: var(--text);
+           font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    header { padding: 14px 20px; background: var(--panel); border-bottom: 1px solid #2a3240; }
+    header h1 { margin: 0; font-size: 1.1rem; }
+    header p { margin: 4px 0 0; font-size: .9rem; color: var(--muted); }
+    main { flex: 1; display: flex; min-height: 0; }
+    #map { flex: 1; }
+    aside { width: 280px; padding: 16px; background: var(--panel); border-left: 1px solid #2a3240; overflow-y: auto; }
+    aside h2 { margin: 0 0 8px; font-size: 1rem; }
+    aside p { margin: 0 0 12px; font-size: .9rem; color: var(--muted); line-height: 1.5; }
+    #info strong { color: var(--accent); }
+    @media (max-width: 700px) {
+      main { flex-direction: column; }
+      aside { width: 100%; border-left: 0; border-top: 1px solid #2a3240; max-height: 40%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Página de prueba</h1>
+    <p>Si ves este mapa, tu hosting y tu dominio funcionan.</p>
+  </header>
+  <main>
+    <div id="map"></div>
+    <aside>
+      <h2>Zona seleccionada</h2>
+      <div id="info"><p>Haz clic en un marcador del mapa.</p></div>
+    </aside>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Datos de EJEMPLO. Los puntajes son inventados, solo para probar la interfaz.
+    var zonas = [
+      { nombre: "Zona de ejemplo A", lat: 31.9, lon: -113.5, puntaje: 72 },
+      { nombre: "Zona de ejemplo B", lat: -24.5, lon: -69.2, puntaje: 85 },
+      { nombre: "Zona de ejemplo C", lat: 12.6, lon: 40.3, puntaje: 64 }
+    ];
+
+    var mapa = L.map("map").setView([15, -30], 2);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(mapa);
+
+    var info = document.getElementById("info");
+    zonas.forEach(function (z) {
+      L.marker([z.lat, z.lon]).addTo(mapa).on("click", function () {
+        info.innerHTML = "<p><strong>" + z.nombre + "</strong></p>" +
+          "<p>Puntaje de ejemplo: " + z.puntaje + " / 100</p>" +
+          "<p>Latitud " + z.lat + ", longitud " + z.lon + "</p>";
+      });
+    });
+  </script>
+</body>
+</html>
