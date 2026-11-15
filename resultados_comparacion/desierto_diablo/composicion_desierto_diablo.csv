@@ -1,0 +1,16 @@
+dato,marte_meridiani,desierto_diablo
+lat / lon,−2.05 / 354.5 °E (cráter Victoria),-25.0…-24.0 / -68.0…-66.5
+elev_media_m,—,4019.4
+celdas_validas,4 escenas CRISM + mapas TES,9924
+pct_oxidos_Fe,dominante (BD530_2 0.181); TES hematita 14.2 %,86.6711
+pct_oxidos_finos_de_los_oxidos,CRISM ve óxidos finos; TES ve hematita gruesa (gris),98.2
+pct_carbonatos,ausente (0 %),26.3594
+pct_arcillas_FeMg,ausente (0.001 %),9.5318
+pct_arcillas_Al,"traza (1.01 %, 1 escena)",10.8315
+pct_micas_felsicas,ausente (supuesto: Meridiani es basáltico),34.2665
+pct_basalto_EMIT,CRISM piroxeno/olivino ausentes en superficie,3.2084
+pct_sulfatos_Fe,CRISM ausente (0.09 %); jarosita in situ (Opportunity),1.558
+pct_yeso_sulfatos,ausente,1.8405
+indice_cuarzo_medio,TES cuarzo 0 % (no detectado),1.0086
+indice_mafico_medio,"TES plagioclasa 8.8 %, piroxeno 5.2 %",0.9542
+pct_celdas_basalto_aster,basáltico,25.55
