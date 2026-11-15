@@ -1,0 +1,26 @@
+,region_completa
+lat_min,-21.0
+lat_max,-20.0
+lon_min,-68.0
+lon_max,-67.0
+archivos_dem,1
+celdas_1km,10201
+elev_media_m,3698.9527277456705
+elev_min_m,3583.0
+elev_max_m,5059.0
+elev_p5_m,3656.5
+elev_mediana_m,3661.5
+elev_p95_m,3894.5
+relieve_desv_est_m,118.72962185601095
+pendiente_media_deg,4.082393270050797
+pendiente_mediana_deg,2.175
+pendiente_p95_deg,14.775
+pct_terreno_pendiente_lt_5deg,78.41369051732882
+rugosidad_media_m,1.860412229139318
+rugosidad_mediana_m,1.0750000000000002
+rugosidad_p95_m,6.425000000000001
+pct_agua,7.263888328714886
+ventana_rugosidad_px,3
+smap_archivos,1
+smap_filtro_calidad,solo calidad recomendada
+humedad_media_m3m3,
