@@ -93,6 +93,8 @@ def avisos_celda(r):
         a.append("sulfatos de Fe > 10 %")
     if r["pct_oxidos_Fe"] < 40:
         a.append("óxidos de Fe < 40 %")
+    if "ndvi" in r and pd.notna(r["ndvi"]) and r["ndvi"] > 0.2:
+        a.append("NDVI > 0.2 (algo de vegetación)")
     return "; ".join(a)
 
 
@@ -149,6 +151,7 @@ def comparar(region, dir_tierra, huella, salida):
     out.mkdir(parents=True, exist_ok=True)
     c = pd.read_csv(d / f"celdas_{region}.csv").sort_values("rango")
     res = pd.read_csv(d / f"resumen_region_{region}.csv", index_col=0)["region_completa"]
+    base = numero(res.get("linea_base_pct", np.nan))      # % que sacaría una superficie sin datos
     nombre_v, v = detectar_version(c)
     pesos, suma = v["pesos"], sum(v["pesos"].values()) + v["bonus"]
 
@@ -165,7 +168,11 @@ def comparar(region, dir_tierra, huella, salida):
                       "similitud_mediana_pct": 100 * z["puntaje"].median(),
                       "pct_celdas_sim_ge_80": 100 * (z["puntaje"] >= 0.8).mean(),
                       "lat": z["lat_centro"].mean(), "lon": z["lon_centro"].mean(),
-                      "elev_mediana_m": z["elev_media_m"].median()})
+                      "elev_mediana_m": z["elev_media_m"].median(),
+                      "linea_base_pct": base,
+                      # 0 = igual que una superficie sin datos; 100 = coincide en todo
+                      "ganancia_sobre_base_pct": 100 * (z["puntaje"].mean() - base / 100) / (1 - base / 100)
+                      if pd.notna(base) and base < 100 else np.nan})
         for k, w in pesos.items():
             s = z[f"s_{k}"].mean()
             criterios.append({"zona": zona, "criterio": k, "peso": w, "objetivo_marte": OBJETIVO_TXT[k],
@@ -249,7 +256,7 @@ def numero(v):
         return v
 
 
-def escribir_excel(res, huella, ruta):
+def escribir_excel(res, huella, ruta, no_eval=None):
     """Libro con una hoja de resumen, una por región, la huella de Marte y notas."""
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
@@ -304,6 +311,7 @@ def escribir_excel(res, huella, ruta):
 
     wb = Workbook()
     regiones = list(res)
+    no_eval = no_eval or {}
 
     # ---------------- RESUMEN ----------------
     ws = wb.active
@@ -315,16 +323,27 @@ def escribir_excel(res, huella, ruta):
 
     f = titulo(ws, f, "1. Similitud con Meridiani por región y zona")
     sim = pd.concat([r["total"].assign(region=nombre(k).title()) for k, r in res.items()])
-    sim = sim[["region", "zona", "n_celdas", "similitud_pct", "similitud_mediana_pct", "pct_celdas_sim_ge_80",
-               "lat", "lon", "elev_mediana_m"]].copy()
-    for col in ("similitud_pct", "similitud_mediana_pct", "pct_celdas_sim_ge_80"):
+    sim = sim[["region", "zona", "n_celdas", "similitud_pct", "linea_base_pct", "ganancia_sobre_base_pct",
+               "similitud_mediana_pct", "pct_celdas_sim_ge_80", "lat", "lon", "elev_mediana_m"]].copy()
+    for col in ("similitud_pct", "linea_base_pct", "ganancia_sobre_base_pct", "similitud_mediana_pct",
+                "pct_celdas_sim_ge_80"):
         sim[col] = sim[col] / 100
     sim["zona"] = sim["zona"].map(nombre)
-    sim.columns = ["Región", "Zona", "Celdas", "Similitud media", "Similitud mediana", "Celdas con similitud ≥ 80 %",
-                   "Lat. media", "Lon. media", "Elevación mediana (m)"]
-    f = tabla(ws, f, sim, {"Celdas": "#,##0", "Similitud media": PCT, "Similitud mediana": PCT,
+    sim.columns = ["Región", "Zona", "Celdas", "Similitud media", "Línea base (sin datos)", "Ganancia sobre la base",
+                   "Similitud mediana", "Celdas con similitud ≥ 80 %", "Lat. media", "Lon. media",
+                   "Elevación mediana (m)"]
+    f = tabla(ws, f, sim, {"Celdas": "#,##0", "Similitud media": PCT, "Línea base (sin datos)": PCT,
+                           "Ganancia sobre la base": PCT, "Similitud mediana": PCT,
                            "Celdas con similitud ≥ 80 %": PCT, "Lat. media": "0.00", "Lon. media": "0.00",
                            "Elevación mediana (m)": "#,##0"})
+    if no_eval:
+        f = titulo(ws, f, "Regiones no evaluables (sin suelo expuesto suficiente: no se calcula similitud)")
+        ne = pd.DataFrame([{"Región": nombre(k).title(), "Celdas candidatas": v.get("celdas_candidatas"),
+                            "Descartadas por vegetación": v.get("celdas_descartadas_vegetacion"),
+                            "Descartadas sin detección EMIT": v.get("celdas_descartadas_sin_deteccion"),
+                            "Motivo": v.get("motivo_no_evaluable")} for k, v in no_eval.items()])
+        f = tabla(ws, f, ne, {"Celdas candidatas": "#,##0", "Descartadas por vegetación": "#,##0",
+                              "Descartadas sin detección EMIT": "#,##0"})
 
     f = titulo(ws, f, "2. Coincidencia por criterio (región completa) y puntos de similitud que se pierden")
     crits = list(res[regiones[0]]["pesos"])
@@ -374,13 +393,17 @@ def escribir_excel(res, huella, ruta):
         f += 1
 
         f = titulo(ws, f, "1. Similitud por zona")
-        t = d["total"].copy()
-        for col in ("similitud_pct", "similitud_mediana_pct", "pct_celdas_sim_ge_80"):
+        t = d["total"][["zona", "n_celdas", "similitud_pct", "linea_base_pct", "ganancia_sobre_base_pct",
+                        "similitud_mediana_pct", "pct_celdas_sim_ge_80", "lat", "lon", "elev_mediana_m"]].copy()
+        for col in ("similitud_pct", "linea_base_pct", "ganancia_sobre_base_pct", "similitud_mediana_pct",
+                    "pct_celdas_sim_ge_80"):
             t[col] = t[col] / 100
         t["zona"] = t["zona"].map(nombre)
-        t.columns = ["Zona", "Celdas", "Similitud media", "Similitud mediana", "Celdas con similitud ≥ 80 %",
-                     "Lat. media", "Lon. media", "Elevación mediana (m)"]
-        f = tabla(ws, f, t, {"Celdas": "#,##0", "Similitud media": PCT, "Similitud mediana": PCT,
+        t.columns = ["Zona", "Celdas", "Similitud media", "Línea base (sin datos)", "Ganancia sobre la base",
+                     "Similitud mediana", "Celdas con similitud ≥ 80 %", "Lat. media", "Lon. media",
+                     "Elevación mediana (m)"]
+        f = tabla(ws, f, t, {"Celdas": "#,##0", "Similitud media": PCT, "Línea base (sin datos)": PCT,
+                             "Ganancia sobre la base": PCT, "Similitud mediana": PCT,
                              "Celdas con similitud ≥ 80 %": PCT, "Lat. media": "0.00", "Lon. media": "0.00",
                              "Elevación mediana (m)": "#,##0"})
 
@@ -465,6 +488,11 @@ def escribir_excel(res, huella, ruta):
         "el grupo. Marte (CRISM) = % de píxeles sobre el umbral. TES = abundancia. Se comparan NIVELES "
         "(dominante / traza / ausente), no los porcentajes directamente.",
         "Índice de cuarzo QI (ASTER) ≤ 1.010 = sin cuarzo. Índice máfico MI (ASTER) ≥ 0.970 = basalto.",
+        "Solo se califican celdas con suelo expuesto: NDVI de ASTER ≤ 0.25 y ≥ 50 % de píxeles EMIT con algún "
+        "mineral detectado. Una región con menos de 10 % de celdas así es 'no evaluable' (sin similitud).",
+        "Línea base = similitud que sacaría una superficie sin datos (EMIT no detecta nada, ASTER plano): "
+        "los criterios 'ausente' coinciden solos. Ganancia sobre la base = (similitud − base) / (100 − base): "
+        "0 % = no mejor que no tener datos; 100 % = coincide en todo.",
         "Colores: azul = dato calculado en Python desde los CSV de minerologia2.py; negro = fórmula de Excel.",
         "Fuentes: resultados_tierra/<region>/celdas_<region>.csv y resumen_region_<region>.csv "
         "(minerologia2.py); huella_marte_final.csv (huella_marte_crism.ipynb). Generado con comparacion_final.py.",
@@ -548,10 +576,25 @@ if __name__ == "__main__":
 
     huella = pd.read_csv(Path(a.marte) / "huella_marte_final.csv")
     regiones = [a.region] if a.region else sorted(
-        p.name for p in Path(a.tierra).iterdir() if p.is_dir() and (p / f"celdas_{p.name}.csv").exists())
+        p.name for p in Path(a.tierra).iterdir()
+        if p.is_dir() and (p / f"resumen_region_{p.name}.csv").exists())
     if not regiones:
-        raise SystemExit(f"No encontré regiones en {Path(a.tierra).resolve()} (<region>/celdas_<region>.csv)")
-    resultados = {r: comparar(r, a.tierra, huella, a.salida) for r in regiones}
+        raise SystemExit(f"No encontré regiones en {Path(a.tierra).resolve()} (<region>/resumen_region_<region>.csv)")
+    resultados, no_eval = {}, {}
+    for r in regiones:
+        d = Path(a.tierra) / r
+        res = pd.read_csv(d / f"resumen_region_{r}.csv", index_col=0)["region_completa"]
+        if str(res.get("evaluable", "sí")).strip().lower() == "no" or not (d / f"celdas_{r}.csv").exists():
+            no_eval[r] = {k: numero(v) for k, v in res.items()}
+            no_eval[r].setdefault("motivo_no_evaluable", "no hay celdas_<region>.csv")
+            print(f"\n{r.upper()}: NO EVALUABLE · {no_eval[r]['motivo_no_evaluable']}")
+            continue
+        if "evaluable" not in res:
+            print(f"\n  aviso: {r} se generó con una versión sin filtros de suelo expuesto; vuelve a correr "
+                  f"minerologia2.py (v4) antes de presentar")
+        resultados[r] = comparar(r, a.tierra, huella, a.salida)
+    if not resultados:
+        raise SystemExit("Ninguna región es evaluable; no hay nada que comparar")
     ruta_xlsx = Path(a.salida) / "comparacion_final.xlsx"
-    escribir_excel(resultados, huella, ruta_xlsx)
+    escribir_excel(resultados, huella, ruta_xlsx, no_eval)
     print(f"\nExcel con los datos de cada región: {ruta_xlsx.resolve()}")
