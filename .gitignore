@@ -25,6 +25,7 @@ ENV/
 # RESULTADOS GENERADOS
 # ==============================
 resultados/
+resources/
 
 # Si TES contiene salidas generadas, ignorar sus archivos
 # numéricos. Descomenta esta línea si confirmas que no los necesitas:
