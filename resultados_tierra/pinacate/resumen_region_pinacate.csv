@@ -1,16 +1,27 @@
 ,region_completa
+evaluable,sí
+motivo_no_evaluable,
+celdas_candidatas,15301
+celdas_descartadas_vegetacion,216
+celdas_descartadas_sin_deteccion,643
+celdas_validas,14442
+pct_celdas_evaluables,94.39
+max_ndvi_celda,0.25
+min_pct_deteccion_celda,50.0
+ndvi_disponible,True
+linea_base_pct,75.0
 criterio_deteccion_emit,band_depth > 3.0 × incertidumbre
 emit_pixeles_validos,8975321
 emit_pct_pixeles_con_deteccion,76.75
-pct_oxidos_Fe,54.2007
-pct_sulfatos_Fe,1.1572
+pct_oxidos_Fe,61.1941
+pct_sulfatos_Fe,1.1521
 pct_yeso_sulfatos,0.0054
-pct_carbonatos,17.2406
-pct_arcillas_FeMg,4.1793
-pct_arcillas_Al,0.5821
-pct_basalto,3.0368
-pct_micas_felsicas,43.6245
-pct_otros,14.3752
+pct_carbonatos,18.4863
+pct_arcillas_FeMg,5.2265
+pct_arcillas_Al,0.7604
+pct_basalto,3.0468
+pct_micas_felsicas,43.6791
+pct_otros,4.5499
 emis_b10_8.3um,0.8893
 emis_b11_8.6um,0.8908
 emis_b12_9.1um,0.8861
@@ -23,15 +34,16 @@ indice_mafico_medio,0.9322
 umbral_basalto_mi,"MI ≥ 0.97 basalto, ≥ 0.95 parcial"
 max_agua_celda_pct,10.0
 min_elev_celda_m,20.0
-pct_celdas_basalto_aster,8.55
+pct_celdas_basalto_aster,7.09
 zonas_control,"lava_pinacate, dunas_altar"
 bonus_sulfatos_Fe,0.0
 pct_agua_region,22.46
 elev_media_m,155.5
 pendiente_media_deg,3.99
-celdas_validas,15301
-puntaje_medio,0.6003
+puntaje_medio,0.5925
 puntaje_max,0.9286
+similitud_media_pct,59.25
+ganancia_sobre_base_pct,-62.99
 humedad_m3m3_2026-11-08_manana,0.1055
 humedad_pixeles_2026-11-08_manana,330
 avisos,ninguno

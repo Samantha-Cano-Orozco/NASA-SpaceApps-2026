@@ -1,16 +1,27 @@
 ,region_completa
+evaluable,sí
+motivo_no_evaluable,
+celdas_candidatas,8978
+celdas_descartadas_vegetacion,85
+celdas_descartadas_sin_deteccion,50
+celdas_validas,8843
+pct_celdas_evaluables,98.5
+max_ndvi_celda,0.25
+min_pct_deteccion_celda,50.0
+ndvi_disponible,True
+linea_base_pct,75.0
 criterio_deteccion_emit,band_depth > 3.0 × incertidumbre
 emit_pixeles_validos,4284969
 emit_pct_pixeles_con_deteccion,95.98
-pct_oxidos_Fe,63.1052
-pct_sulfatos_Fe,1.0043
+pct_oxidos_Fe,63.5536
+pct_sulfatos_Fe,0.9831
 pct_yeso_sulfatos,0.0265
-pct_carbonatos,77.9859
-pct_arcillas_FeMg,1.5173
-pct_arcillas_Al,0.4425
-pct_basalto,1.7608
-pct_micas_felsicas,5.66
-pct_otros,8.8723
+pct_carbonatos,78.3355
+pct_arcillas_FeMg,4.1249
+pct_arcillas_Al,1.5237
+pct_basalto,1.8462
+pct_micas_felsicas,5.6678
+pct_otros,4.0873
 emis_b10_8.3um,0.9322
 emis_b11_8.6um,0.9354
 emis_b12_9.1um,0.935
@@ -23,15 +34,16 @@ indice_mafico_medio,0.9656
 umbral_basalto_mi,"MI ≥ 0.97 basalto, ≥ 0.95 parcial"
 max_agua_celda_pct,10.0
 min_elev_celda_m,sin filtro
-pct_celdas_basalto_aster,47.36
+pct_celdas_basalto_aster,46.71
 zonas_control,ninguna
 bonus_sulfatos_Fe,0.0
 pct_agua_region,5.64
 elev_media_m,764.5
 pendiente_media_deg,8.56
-celdas_validas,8978
-puntaje_medio,0.7063
+puntaje_medio,0.6938
 puntaje_max,0.9643
+similitud_media_pct,69.38
+ganancia_sobre_base_pct,-22.48
 humedad_m3m3_2026-11-08_manana,0.1357
 humedad_pixeles_2026-11-08_manana,40
 avisos,ninguno

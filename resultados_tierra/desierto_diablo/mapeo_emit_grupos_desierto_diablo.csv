@@ -18,7 +18,7 @@ Muscovite GDS113 Ruby W1R1Bb splib06 3348,96763,micas_felsicas,False
 Gypsum HS333.3B (Selenite) W1R1Ha,76703,yeso_sulfatos,False
 Montmorillonite SAz-1 W1R1Hb,74547,arcillas_Al,False
 Calcite+.50Ca-Mont AMX6 W1R1Bb,71057,carbonatos,False
-Kaol+Musc_intimate CU93-5C W1R1Ha AREF,68687,otros,True
+Kaol+Musc_intimate CU93-5C W1R1Ha AREF,68687,arcillas_Al,False
 Siderite HS271.3B W1R1Ba,65725,carbonatos,False
 Palygorskite PFL-1 Attapulg W1R1Bb,59754,otros,True
 Calcite+.33Muscov AMX5 Ruby W1R1Ba,53422,carbonatos,False
@@ -27,13 +27,13 @@ Calcite WS272 W1R1Ha,48214,carbonatos,False
 Magnesite+Hydroma HS47.3B W1R1Ba,42082,carbonatos,False
 Illite GDS4.2 Marblehead_WI W1R1H_,39399,arcillas_Al,False
 Jarosite SJ-1 H3O 10-20% W1R1Bb,35866,sulfatos_Fe,False
-Kaol.5+MuscCU91-250A AMX13 W1R1Bb,29116,otros,True
+Kaol.5+MuscCU91-250A AMX13 W1R1Bb,29116,arcillas_Al,False
 Calcite.80+Mont_Swy-1 GDS212 W1R1Ba,25385,carbonatos,False
 Jarosite_on_Qtzite BR93-34A2 W1R1Bb,23951,sulfatos_Fe,False
 Chalcedony CU91-6A W1R1Ba,23696,otros,True
-Muscov+Jaros CU93-314 coatng W1R1Hb,23050,otros,True
+Muscov+Jaros CU93-314 coatng W1R1Hb,23050,micas_felsicas,False
 Lepidolite NMNH88526-1 W1R1Ba,20933,micas_felsicas,False
-Fe-Hydroxide SU93-106 amorph W1R1Bb,20332,otros,True
+Fe-Hydroxide SU93-106 amorph W1R1Bb,20332,oxidos_Fe,False
 Muscovite+Chlorite CU91-253D W2R4Na,17340,micas_felsicas,False
 Basalt_weathered BR93-43 W1R1Bb,15350,basalto,False
 Muscovite GDS116 Tanzania W1R1Ba,15078,micas_felsicas,False
@@ -51,7 +51,7 @@ Goethite WS222 coarse grain W1R1H_,5324,oxidos_Fe,False
 Hematite_Coatd_Qtzt BR93-25C W1R1Hb AREF,5112,oxidos_Fe,False
 Calcite.33+Kaol.33+Mus AMXr2 W1R1Ba,4803,carbonatos,False
 Kaolinite KGa-2 (pxl) W1R1Hb,4674,arcillas_Al,False
-Roscoelite EN124 W1R1Bb,3663,otros,True
+Roscoelite EN124 W1R1Bb,3663,micas_felsicas,False
 Maghemite GDS81 Syn (M-3) W1R1Bb,3510,oxidos_Fe,False
 Basalt_fresh BR93-46B W1R1Bb,3133,basalto,False
 Carnallite NMNH98011 W1R1Bb,3100,otros,True
@@ -69,39 +69,39 @@ Acid_Mine_Dr Assemb1-Fe3+ W1R1Fb,1756,otros,True
 Actinolite NMNHR16485 W1R1Bb,1628,otros,True
 Kaolinite CM9 (wxl) W1R1Hb,1433,arcillas_Al,False
 Hematite_Coatd_Qtz BR93-25B W1R1Bb,1315,oxidos_Fe,False
-Thuringite SMR-15.c 32um W1R1Ba,1313,otros,True
+Thuringite SMR-15.c 32um W1R1Ba,1313,arcillas_FeMg,False
 Kaolin_Smect H89-FR-5 .3Kaol W1R1Bb,1304,arcillas_Al,False
-Alun_Na+Kaol+Hemat MV00-11a W1R1Fc,1263,otros,True
+Alun_Na+Kaol+Hemat MV00-11a W1R1Fc,1263,arcillas_Al,False
 Kaolin_Smect H89-FR-2 .5Kaol W1R1Bb,1005,arcillas_Al,False
 Copiapite GDS21 W1R1Bb,986,sulfatos_Fe,False
 Magnetite_skarn BR93-5B W1R1Hb AREF,879,oxidos_Fe,False
 Plastic_Vinyl GDS372 White W1R1Fa,735,excluir,False
 Actinolite_Dolomit BR93-60B W1R1BbS,719,carbonatos,False
-Goethite CU91-252 coatedchip W1R1H_,712,excluir,False
+Goethite CU91-252 coatedchip W1R1H_,712,oxidos_Fe,False
 Cummingtonite HS294.3B W1R1Bc,684,otros,True
 Alunite+Dickite MV99-6-26b W1R1Fc,675,yeso_sulfatos,False
 Coated_Steel_Girder WTC01-8 W1R1Fa,495,excluir,False
 Nontronite NG-1.a W1R1Bb,458,arcillas_FeMg,False
 Jarosite GDS99 K 200C Syn W1R1BaS,426,sulfatos_Fe,False
-Grass_dry+0.17%Na-Mont AMX35 W1R1Ba AREF,404,otros,True
-Nacrite GDS88 s06crj3a=c,385,otros,True
-CO2+O2+CH4 TRANSM ModtranZ20 r06crj3a=,320,otros,True
-Paragonite GDS109 W1R1Ba,292,carbonatos,False
+Grass_dry+0.17%Na-Mont AMX35 W1R1Ba AREF,404,excluir,False
+Nacrite GDS88 s06crj3a=c,385,arcillas_Al,False
+CO2+O2+CH4 TRANSM ModtranZ20 r06crj3a=,320,excluir,False
+Paragonite GDS109 W1R1Ba,292,micas_felsicas,False
 Cinnabar HS133.3B W1R1Bc,284,otros,True
 Prehnite+.50Chlorite AMIX,280,arcillas_FeMg,False
 Magnetite HS195.3B W1R1Bb,276,oxidos_Fe,False
-Calc.25+dolo.25+mont.5 AMX18 W1R1Bb,274,otros,True
-Kaol_Wxl+0.5Musc_Ruby AMX12 W1R1Ba,264,otros,True
-Kaolwxl.75+Alun_HS295 AMX14 W1R1Bb,259,otros,True
-Dry_Long_Grass AV87-2 W1R1Ba,253,otros,True
+Calc.25+dolo.25+mont.5 AMX18 W1R1Bb,274,carbonatos,False
+Kaol_Wxl+0.5Musc_Ruby AMX12 W1R1Ba,264,arcillas_Al,False
+Kaolwxl.75+Alun_HS295 AMX14 W1R1Bb,259,arcillas_Al,False
+Dry_Long_Grass AV87-2 W1R1Ba,253,excluir,False
 Beidellite+Montmor GDS124 =b,253,arcillas_Al,False
 Rhodochrosite HS338.3B W1R1Bb,233,carbonatos,False
 Calcite+Talc PC99-1G W1R1Fc,225,carbonatos,False
 Renyolds_TnlSldgWet SM93-15w W1R1Ba,224,excluir,False
-Grass_Golden_Dry GDS480 W1R1Fa,219,otros,True
+Grass_Golden_Dry GDS480 W1R1Fa,219,excluir,False
 Prehnite GDS613.a <60um =aa_,216,otros,True
 Pyrite LV95-6A Weath on Tail W1R1Bb,207,otros,True
-Cronstedtite M3542 =bb_,206,otros,True
+Cronstedtite M3542 =bb_,206,arcillas_FeMg,False
 Hematite WS161 W1R1Hb,196,oxidos_Fe,False
 Plastic_Tarp GDS340 Blu_Wovn W1R1Fa,195,excluir,False
 Alunite0.5+Kaol_KGa-1 AMX3 W1R1Bb,182,yeso_sulfatos,False
@@ -111,9 +111,9 @@ Epidote BR93-33a W1R1Bb AREF,159,otros,True
 Cookeite CAr-1.a 104-150um =bb_,153,otros,True
 Azurite WS316 W1R1Ba,142,otros,True
 Szomolnokite NMNH104303 UT,142,sulfatos_Fe,False
-Calc.25+Dolo.25+Ca-Mon AMX7 W1R1Bb,141,otros,True
+Calc.25+Dolo.25+Ca-Mon AMX7 W1R1Bb,141,carbonatos,False
 Talc WS659 W1R1Bb,136,arcillas_FeMg,False
-Hypersthene NMNHC2368 W1R1Bb,134,otros,True
+Hypersthene NMNHC2368 W1R1Bb,134,basalto,False
 Acid_Mine_Dr Assemb2-Fe3+ W1R1Fb,129,otros,True
 Calcite.80wt+Kaol_CM9 GDS213 W1R1Ba,126,carbonatos,False
 Montmorill+Trichlor SWy 1ml W1R1Ba,121,arcillas_Al,False
@@ -125,16 +125,16 @@ Cookeite CAr-1.c <30um =cc_,95,otros,True
 Plastic_HDPE GDS393 GlosWhTr W1R1Fa,89,excluir,False
 Pinnoite NMNH123943 W1R1Ba,80,otros,True
 Analcime GDS1 Zeolite W1R1Ba,79,otros,True
-Kalun+kaol+gth mv2-ar3 W1R1Fb,66,otros,True
-Strontianite HS272.3B W1R1Bb,61,otros,True
+Kalun+kaol+gth mv2-ar3 W1R1Fb,66,arcillas_Al,False
+Strontianite HS272.3B W1R1Bb,61,carbonatos,False
 Alunite0.66K+.34Na CU91-217A W2R4Nb,61,yeso_sulfatos,False
 Pyrolusite HS138.3B W1R1Bb,56,otros,True
 Bytownite HS106.3B Plagio W1R1Bc,55,otros,True
 Chlor+Goethite CU93-4B Phyl W1R1Ba,51,oxidos_Fe,False
 Clinochlore GDS158 Flagst W1R1Hb,50,arcillas_FeMg,False
-Margarite GDS106 W1R1Bc,50,otros,True
+Margarite GDS106 W1R1Bc,50,micas_felsicas,False
 Gyp.5+Kjar.3+hAlmsc.2 AMX24 W1R1Ba,50,otros,True
-Alun.33+Kaol.33+Musc.33 AMX2 W1R1Ba,48,otros,True
+Alun.33+Kaol.33+Musc.33 AMX2 W1R1Ba,48,micas_felsicas,False
 Goethite MPCMA2-B FineGr adj W1R1Bb,46,oxidos_Fe,False
 Phlogopite_Sand_Mix BR93-20 W1R1Ba,43,micas_felsicas,False
 Gyp+jar+ill BRCM1 Marysvale W1R1Fb,41,otros,True
@@ -149,34 +149,34 @@ Gyp.4+jr20+msc.2+dic.2 AMX23 W1R1Ba,22,otros,True
 Talc GDS23 74-250um fr W1R1Ba,19,arcillas_FeMg,False
 Enstatite NMNH128288 W1R1Bc,19,otros,True
 Diaspore HS416.3B W1R1Bb,18,otros,True
-Goeth+qtz.5+Jarosite.5 AMX11 W1R1BbS,18,sulfatos_Fe,False
+Goeth+qtz.5+Jarosite.5 AMX11 W1R1BbS,18,oxidos_Fe,False
 Olivine HS285.4B Fo80 W1R1Bb,17,basalto,False
 Chrysotile ML99-12C Fine Fib W1R1Fb,17,otros,True
 Jadeite HS343.3B W1R1Bb,16,otros,True
 Alunite.5+MuscCU91-250A AMX4 W1R1Ba,16,yeso_sulfatos,False
-Chlorite+Muscovite CU93-65A W1R1Ba,10,micas_felsicas,False
+Chlorite+Muscovite CU93-65A W1R1Ba,10,arcillas_FeMg,False
 Butlerite GDS25 W1R1Ba,10,sulfatos_Fe,False
 Portlandite GDS525 Ca(OH)2 W1R1Fa,9,otros,True
-Montmorill+Unleaded_Gas SWy W1R1Ba,9,arcillas_Al,False
+Montmorill+Unleaded_Gas SWy W1R1Ba,9,excluir,False
 Alunite GDS82 Na82 W1R1Bb,9,yeso_sulfatos,False
 Schwertmannite BZ93-1 W1R1Bb,9,sulfatos_Fe,False
-Alun0.3+Musc0.4+Pyro0.3 AMX1 W1R1Ba,8,otros,True
-Plywood GDS365 Fresh Pine W1R1Fa,8,otros,True
-Pyrophyl.25+wxlKaol.75 AMX17,7,otros,True
+Alun0.3+Musc0.4+Pyro0.3 AMX1 W1R1Ba,8,micas_felsicas,False
+Plywood GDS365 Fresh Pine W1R1Fa,8,excluir,False
+Pyrophyl.25+wxlKaol.75 AMX17,7,arcillas_Al,False
 Vermiculite WS681 W1R1Hc,7,arcillas_FeMg,False
 Chrysotile HS323.1B W1R1Ba,7,otros,True
 Alunite GDS83 Na63 W1R1Bb,6,yeso_sulfatos,False
-Hectorite SHCa-1.Ac-B W1R1Hb,6,otros,True
+Hectorite SHCa-1.Ac-B W1R1Hb,6,arcillas_Al,False
 Biotite-phlogopite P23-5 Sam W1R1H_,6,micas_felsicas,False
 Axinite HS342.3B W1R1Bb,4,otros,True
 Dic.4+msc.3+gyp.2+jr.1 AMX20 W1R1Ba,4,otros,True
 Pyrophyl+Muscovite JH_PYRM1 W1R1Fb,3,micas_felsicas,False
 Dolomit+Calcite+Talc PC99-1E W1R1Fc,3,carbonatos,False
-Pitch_Limonite GDS104 Cu W1R1B?,3,otros,True
+Pitch_Limonite GDS104 Cu W1R1B?,3,oxidos_Fe,False
 Alunite0.73K+.27Na CU91-217D W2R4Na,3,yeso_sulfatos,False
 Hedenbergite NMNH119197 W1R1Bb,3,otros,True
 Rivadavite NMNH170164 Amph W1R1Ba,3,otros,True
-Lepidocrosite GDS80 (Syn) W1R1Hb,2,otros,True
+Lepidocrosite GDS80 (Syn) W1R1Hb,2,oxidos_Fe,False
 Alunite0.35K+.65Na CU91-217H W2R4Nb,2,yeso_sulfatos,False
 Tremolite HS18.3 W1R1Bc,2,otros,True
 Polyhalite NMNH92669-4 W1R1Ba,2,yeso_sulfatos,False
@@ -188,7 +188,7 @@ Clintonite NMNH126553 W1R1Bc,2,otros,True
 Alunite GDS97 K Syn (150C) W2R4Na,2,yeso_sulfatos,False
 Goethite MPCMA2-C M-Crsgrad2 W1R1Hb AREF,1,oxidos_Fe,False
 Kieserite Batch4 GDS671,1,yeso_sulfatos,False
-Blck_Mn_Coat_Tailngs LV95-3 W1R1Bb,1,otros,True
+Blck_Mn_Coat_Tailngs LV95-3 W1R1Bb,1,excluir,False
 Szomolnokite GDS874 Heat275C,1,sulfatos_Fe,False
 Alunite RES-3 Na Syn (450C) W2R4Na,1,yeso_sulfatos,False
 Painted_Aluminum GDS333 LgGr W1R1Fa,1,excluir,False

@@ -1,16 +1,27 @@
 ,region_completa
+evaluable,sí
+motivo_no_evaluable,
+celdas_candidatas,8135
+celdas_descartadas_vegetacion,630
+celdas_descartadas_sin_deteccion,5308
+celdas_validas,2197
+pct_celdas_evaluables,27.01
+max_ndvi_celda,0.25
+min_pct_deteccion_celda,50.0
+ndvi_disponible,True
+linea_base_pct,75.0
 criterio_deteccion_emit,band_depth > 3.0 × incertidumbre
 emit_pixeles_validos,4282655
 emit_pct_pixeles_con_deteccion,29.55
-pct_oxidos_Fe,8.392
+pct_oxidos_Fe,8.5782
 pct_sulfatos_Fe,2.6171
 pct_yeso_sulfatos,0.0676
-pct_carbonatos,3.1628
-pct_arcillas_FeMg,0.3734
-pct_arcillas_Al,0.7133
-pct_basalto,0.7363
-pct_micas_felsicas,0.396
-pct_otros,22.5748
+pct_carbonatos,3.1788
+pct_arcillas_FeMg,5.2988
+pct_arcillas_Al,0.6959
+pct_basalto,2.625
+pct_micas_felsicas,0.3985
+pct_otros,15.4608
 emis_b10_8.3um,0.9553
 emis_b11_8.6um,0.9525
 emis_b12_9.1um,0.9526
@@ -23,13 +34,14 @@ indice_mafico_medio,0.9861
 umbral_basalto_mi,"MI ≥ 0.97 basalto, ≥ 0.95 parcial"
 max_agua_celda_pct,10.0
 min_elev_celda_m,sin filtro
-pct_celdas_basalto_aster,90.17
+pct_celdas_basalto_aster,89.12
 zonas_control,ninguna
 bonus_sulfatos_Fe,0.0
 pct_agua_region,7.26
 elev_media_m,3699.0
 pendiente_media_deg,4.09
-celdas_validas,8135
-puntaje_medio,0.7595
+puntaje_medio,0.7456
 puntaje_max,1.0
-avisos,"EMIT detecta minerales solo en 30 % de los píxeles: posible vegetación, nubes o suelo oscuro; los % por grupo son poco representativos | 90 % de las celdas cuentan como basalto (MI ≥ 0.97): la vegetación o el suelo húmedo también dan MI alto; revisa el mapa de índice máfico"
+similitud_media_pct,74.56
+ganancia_sobre_base_pct,-1.78
+avisos,"EMIT detecta minerales solo en 30 % de los píxeles: posible vegetación, nubes o suelo oscuro; los % por grupo son poco representativos | 89 % de las celdas cuentan como basalto (MI ≥ 0.97): la vegetación o el suelo húmedo también dan MI alto; revisa el mapa de índice máfico"
