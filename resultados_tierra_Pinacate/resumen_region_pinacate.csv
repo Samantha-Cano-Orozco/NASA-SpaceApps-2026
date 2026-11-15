@@ -1,27 +1,38 @@
 ,region_completa
 criterio_deteccion_emit,band_depth > 3.0 × incertidumbre
 emit_pixeles_validos,8975321
-pct_oxidos_Fe,54.2007
-pct_sulfatos_Fe,1.1572
+emit_pct_pixeles_con_deteccion,76.75
+pct_oxidos_Fe,61.0874
+pct_oxidos_sobre_cuarzo,0.1067
+pct_sulfatos_Fe,1.217
 pct_yeso_sulfatos,0.0054
-pct_carbonatos,17.2406
-pct_arcillas_FeMg,4.3444
-pct_arcillas_Al,44.0285
-pct_basalto,3.0368
-pct_otros,14.3881
+pct_carbonatos,18.4863
+pct_arcillas_FeMg,5.2283
+pct_arcillas_Al,0.7604
+pct_micas_felsicas,43.6774
+pct_basalto,3.0468
+pct_otros,4.4851
 emis_b10_8.3um,0.8893
 emis_b11_8.6um,0.8908
 emis_b12_9.1um,0.8861
 emis_b13_10.6um,0.9589
 emis_b14_11.3um,0.9619
 indice_cuarzo_medio,1.0079
-umbral_cuarzo_usado,1.0406
-origen_umbral_cuarzo,percentil 90 del QI en 4345 celdas con basalto
+umbral_cuarzo_usado,1.01
+origen_umbral_cuarzo,"físico: QI ≤ 1.01 sin cuarzo, ≤ 1.02 parcial"
+indice_mafico_medio,0.9322
+umbral_basalto_mi,"MI ≥ 0.97 basalto, ≥ 0.95 parcial"
+max_agua_celda_pct,10.0
+min_elev_celda_m,20.0
+pct_celdas_basalto_aster,8.55
+zonas_control,"lava_pinacate, dunas_altar"
+bonus_sulfatos_Fe,0.0
 pct_agua_region,22.46
 elev_media_m,155.5
 pendiente_media_deg,3.99
-celdas_validas,17411
-puntaje_medio,0.6706
-puntaje_max,0.963
+celdas_validas,15301
+puntaje_medio,0.5709
+puntaje_max,0.9333
 humedad_m3m3_2026-11-08_manana,0.1055
 humedad_pixeles_2026-11-08_manana,330
+avisos,ninguno
