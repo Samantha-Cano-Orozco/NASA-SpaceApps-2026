@@ -73,7 +73,6 @@ OBJETIVO = {
     "carbonatos": 0,
     "arcillas_FeMg": 0,
     "arcillas_Al": 1,      # traza
-    "micas_felsicas": 0,   # Meridiani es basáltico: sin micas de rocas graníticas
 }
 PESOS = {                  # ajustables
     "oxidos_Fe": 3,
@@ -82,7 +81,6 @@ PESOS = {                  # ajustables
     "carbonatos": 2,
     "arcillas_FeMg": 2,
     "arcillas_Al": 1,
-    "micas_felsicas": 2,   # discriminador nuevo: separa arena granítica (dunas) de basalto
 }
 BONUS_SULFATOS_FE = 0.0    # desactivado: CRISM no ve sulfatos en ninguna de las 4 escenas de Meridiani
                            # (solo Opportunity in situ) y en la Tierra premiaba salitrales costeros.
@@ -113,30 +111,21 @@ ZONAS_CONTROL_POR_REGION = {
 # Mapeo de nombres de la biblioteca EMIT -> grupo de la huella (por palabras clave, en minúsculas).
 # El orden importa: se usa la primera regla que coincide.
 REGLAS_GRUPO = [
-    ("excluir",       ["cyanide", "plastic", "wtc", "coated_steel", "girder", "renyolds", "reynolds",
-                       "sludge", "paint", "plywood", "grass", "green_slime", "neodymium", "co2+o2",
-                       "transm", "tailngs", "unleaded"]),
+    ("excluir",       ["cyanide", "plastic", "wtc", "coated", "renyolds", "reynolds", "sludge", "paint"]),
     ("sulfatos_Fe",   ["jarosit", "copiapit", "butlerit", "schwertmann", "coquimbit", "fibroferrit",
-                       "rozenit", "melanterit", "szomolnokit", "botryogen", "acid_mine"]),
+                       "rozenit", "melanterit", "szomolnokit", "botryogen"]),
     ("yeso_sulfatos", ["gypsum", "anhydrit", "bassanit", "alunit", "polyhalit", "epsomit", "kieserit"]),
-    # Óxido de Fe como capa sobre cuarzo = firma de arena de desierto terrestre (NO es como Meridiani)
-    ("oxidos_sobre_cuarzo", ["coatd_qtz", "coatd_qtzt", "+quartz", "quartz.98", "on_qtz"]),
-    ("oxidos_Fe",     ["hematit", "nhematit", "goethit", "goeth", "ferrihydrit", "lepidocro", "maghemit",
-                       "magnetit", "fe-hydroxide", "limonit"]),
-    # Micas (muscovita, etc.): indican rocas félsicas/graníticas, lo contrario del basalto de Marte.
-    # Va ANTES de carbonatos para que "paragonite" no caiga en "aragonit".
-    ("micas_felsicas", ["muscovit", "muscov", "musc", "paragonit", "lepidolit", "margarit", "sericit",
-                        "roscoelit"]),
-    ("carbonatos",    ["calcit", "calc.", "calc+", "dolomit", "dolo", "siderit", "magnesit", "ankerit",
-                       "aragonit", "rhodochrosit", "witherit", "strontianit"]),
-    ("arcillas_FeMg", ["chlorit", "chlor+", "clinochlor", "chamosit", "vermiculit", "nontronit", "saponit",
-                       "biotit", "phlogopit", "serpentin", "talc", "cronstedtit", "thuringit"]),
-    ("arcillas_Al",   ["kaolin", "kaol", "montmor", "illit", "halloysit", "dickit", "pyrophyllit",
-                       "beidellit", "smectit", "nacrit", "hectorit"]),
-    ("basalto",       ["basalt", "pyroxen", "augit", "olivin", "hypersthen", "pigeonit", "diopsid"]),
+    ("oxidos_Fe",     ["hematit", "nhematit", "goethit", "ferrihydrit", "lepidocrocit", "maghemit",
+                       "magnetit"]),
+    ("carbonatos",    ["calcit", "dolomit", "siderit", "magnesit", "ankerit", "aragonit", "rhodochrosit"]),
+    ("arcillas_FeMg", ["chlorit", "clinochlor", "chamosit", "vermiculit", "nontronit", "saponit",
+                       "biotit", "phlogopit", "serpentin", "talc"]),
+    ("arcillas_Al",   ["kaolin", "montmor", "illit", "muscovit", "halloysit", "dickit", "pyrophyllit",
+                       "beidellit", "smectit", "sericit"]),
+    ("basalto",       ["basalt", "pyroxen", "augit", "olivin"]),
 ]
-GRUPOS = ["oxidos_Fe", "oxidos_sobre_cuarzo", "sulfatos_Fe", "yeso_sulfatos", "carbonatos",
-          "arcillas_FeMg", "arcillas_Al", "micas_felsicas", "basalto", "otros"]
+GRUPOS = ["oxidos_Fe", "sulfatos_Fe", "yeso_sulfatos", "carbonatos", "arcillas_FeMg",
+          "arcillas_Al", "basalto", "otros"]
 
 pd.set_option("display.width", 220)
 pd.set_option("display.max_rows", None)
@@ -150,19 +139,6 @@ def grupo_de(nombre):
     n = nombre.strip().lower()
     if n in {"fe", "fe_oxide", "fe-oxide"} or n.startswith("fe_") or n.startswith("fe "):
         return "oxidos_Fe"
-    reglas = dict(REGLAS_GRUPO)
-    # 1) Basura / muestras artificiales: se revisa el nombre completo
-    if any(k in n for k in reglas["excluir"]):
-        return "excluir"
-    # 2) Óxido de Fe sobre cuarzo (salvo que sea jarosita): nombre completo
-    if "jarosit" not in n and any(k in n for k in reglas["oxidos_sobre_cuarzo"]):
-        return "oxidos_sobre_cuarzo"
-    # 3) En mezclas ("Calcite+.33Muscov") manda el primer mineral, que es el dominante
-    primero = re.split(r"[+\s]", n)[0]
-    for grupo, claves in REGLAS_GRUPO:
-        if any(k in primero for k in claves):
-            return grupo
-    # 4) Si el primero no se reconoce, se busca en todo el nombre
     for grupo, claves in REGLAS_GRUPO:
         if any(k in n for k in claves):
             return grupo
