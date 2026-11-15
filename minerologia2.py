@@ -53,6 +53,7 @@ OBJETIVO = {
     "carbonatos": 0,
     "arcillas_FeMg": 0,
     "arcillas_Al": 1,      # traza
+    "micas_felsicas": 0,   # Meridiani es basáltico: sin micas de rocas graníticas
 }
 PESOS = {                  # ajustables
     "oxidos_Fe": 3,
@@ -61,34 +62,48 @@ PESOS = {                  # ajustables
     "carbonatos": 2,
     "arcillas_FeMg": 2,
     "arcillas_Al": 1,
+    "micas_felsicas": 2,   # discriminador nuevo: separa arena granítica (dunas) de basalto
 }
-BONUS_SULFATOS_FE = 0.5    # jarosita/copiapita: Opportunity los confirmó en Meridiani
+BONUS_SULFATOS_FE = 0.5
+# Cuarzo con ASTER: QI = b11²/(b10·b12). QI ≈ 1 = espectro sin el doblete del cuarzo (basalto);
+# QI > 1 = doblete del cuarzo. Umbral físico (no depende de qué celdas haya en la región):
+QI_SIN_CUARZO = 1.010      # QI ≤ este valor -> sin cuarzo (puntaje 1)
+QI_CUARZO_PARCIAL = 1.020  # entre los dos -> 0.5 ; por encima -> 0    # jarosita/copiapita: Opportunity los confirmó en Meridiani
 
 # Zonas de control (lat_min, lat_max, lon_min, lon_max). AJUSTAR viendo mapa_qi_hematita.
 # Valores iniciales aproximados para El Pinacate; si una zona no cae donde debe, corrígela.
 ZONAS_CONTROL = {
-    "lava_pinacate": (31.60, 31.95, -113.75, -113.30),
+    "lava_pinacate": (31.60, 31.95, -113.62, -113.30),   # núcleo del campo volcánico (sin dunas)
     "dunas_altar":   (31.95, 32.30, -114.60, -114.10),
 }
 
 # Mapeo de nombres de la biblioteca EMIT -> grupo de la huella (por palabras clave, en minúsculas).
 # El orden importa: se usa la primera regla que coincide.
 REGLAS_GRUPO = [
-    ("excluir",       ["cyanide", "plastic", "wtc", "coated", "renyolds", "reynolds", "sludge", "paint"]),
+    ("excluir",       ["cyanide", "plastic", "wtc", "coated_steel", "girder", "renyolds", "reynolds",
+                       "sludge", "paint", "plywood", "grass", "green_slime", "neodymium", "co2+o2",
+                       "transm", "tailngs", "unleaded"]),
     ("sulfatos_Fe",   ["jarosit", "copiapit", "butlerit", "schwertmann", "coquimbit", "fibroferrit",
-                       "rozenit", "melanterit", "szomolnokit", "botryogen"]),
+                       "rozenit", "melanterit", "szomolnokit", "botryogen", "acid_mine"]),
     ("yeso_sulfatos", ["gypsum", "anhydrit", "bassanit", "alunit", "polyhalit", "epsomit", "kieserit"]),
-    ("oxidos_Fe",     ["hematit", "nhematit", "goethit", "ferrihydrit", "lepidocrocit", "maghemit",
-                       "magnetit"]),
-    ("carbonatos",    ["calcit", "dolomit", "siderit", "magnesit", "ankerit", "aragonit", "rhodochrosit"]),
-    ("arcillas_FeMg", ["chlorit", "clinochlor", "chamosit", "vermiculit", "nontronit", "saponit",
-                       "biotit", "phlogopit", "serpentin", "talc"]),
-    ("arcillas_Al",   ["kaolin", "montmor", "illit", "muscovit", "halloysit", "dickit", "pyrophyllit",
-                       "beidellit", "smectit", "sericit"]),
-    ("basalto",       ["basalt", "pyroxen", "augit", "olivin"]),
+    # Óxido de Fe como capa sobre cuarzo = firma de arena de desierto terrestre (NO es como Meridiani)
+    ("oxidos_sobre_cuarzo", ["coatd_qtz", "coatd_qtzt", "+quartz", "quartz.98", "on_qtz"]),
+    ("oxidos_Fe",     ["hematit", "nhematit", "goethit", "goeth", "ferrihydrit", "lepidocro", "maghemit",
+                       "magnetit", "fe-hydroxide", "limonit"]),
+    # Micas (muscovita, etc.): indican rocas félsicas/graníticas, lo contrario del basalto de Marte.
+    # Va ANTES de carbonatos para que "paragonite" no caiga en "aragonit".
+    ("micas_felsicas", ["muscovit", "muscov", "musc", "paragonit", "lepidolit", "margarit", "sericit",
+                        "roscoelit"]),
+    ("carbonatos",    ["calcit", "calc.", "calc+", "dolomit", "dolo", "siderit", "magnesit", "ankerit",
+                       "aragonit", "rhodochrosit", "witherit", "strontianit"]),
+    ("arcillas_FeMg", ["chlorit", "chlor+", "clinochlor", "chamosit", "vermiculit", "nontronit", "saponit",
+                       "biotit", "phlogopit", "serpentin", "talc", "cronstedtit", "thuringit"]),
+    ("arcillas_Al",   ["kaolin", "kaol", "montmor", "illit", "halloysit", "dickit", "pyrophyllit",
+                       "beidellit", "smectit", "nacrit", "hectorit"]),
+    ("basalto",       ["basalt", "pyroxen", "augit", "olivin", "hypersthen", "pigeonit", "diopsid"]),
 ]
-GRUPOS = ["oxidos_Fe", "sulfatos_Fe", "yeso_sulfatos", "carbonatos", "arcillas_FeMg",
-          "arcillas_Al", "basalto", "otros"]
+GRUPOS = ["oxidos_Fe", "oxidos_sobre_cuarzo", "sulfatos_Fe", "yeso_sulfatos", "carbonatos",
+          "arcillas_FeMg", "arcillas_Al", "micas_felsicas", "basalto", "otros"]
 
 pd.set_option("display.width", 220)
 pd.set_option("display.max_rows", None)
@@ -102,6 +117,19 @@ def grupo_de(nombre):
     n = nombre.strip().lower()
     if n in {"fe", "fe_oxide", "fe-oxide"} or n.startswith("fe_") or n.startswith("fe "):
         return "oxidos_Fe"
+    reglas = dict(REGLAS_GRUPO)
+    # 1) Basura / muestras artificiales: se revisa el nombre completo
+    if any(k in n for k in reglas["excluir"]):
+        return "excluir"
+    # 2) Óxido de Fe sobre cuarzo (salvo que sea jarosita): nombre completo
+    if "jarosit" not in n and any(k in n for k in reglas["oxidos_sobre_cuarzo"]):
+        return "oxidos_sobre_cuarzo"
+    # 3) En mezclas ("Calcite+.33Muscov") manda el primer mineral, que es el dominante
+    primero = re.split(r"[+\s]", n)[0]
+    for grupo, claves in REGLAS_GRUPO:
+        if any(k in primero for k in claves):
+            return grupo
+    # 4) Si el primero no se reconoce, se busca en todo el nombre
     for grupo, claves in REGLAS_GRUPO:
         if any(k in n for k in claves):
             return grupo
@@ -319,18 +347,11 @@ def main(carpeta, region):
         c[f"nivel_{g}"] = nivel(c[f"pct_{g}"])
     c["nivel_sulfatos_Fe"] = nivel(c["pct_sulfatos_Fe"])
 
-    # Umbral de "cuarzo ausente": percentil 90 del QI en celdas con basalto (≥ traza).
-    # Idea: el basalto casi no tiene cuarzo, así que su rango de QI define "sin cuarzo";
-    # una celda por encima de ese rango tiene más cuarzo que el basalto típico.
-    # (No se usa la mediana: marcaría como "con cuarzo" a la mitad del basalto por definición.)
-    bas = c["nivel_basalto"] >= 1
-    if bas.sum() >= 20:
-        umbral_qi = c.loc[bas, "qi"].quantile(0.90)
-        origen_qi = f"percentil 90 del QI en {int(bas.sum())} celdas con basalto"
-    else:
-        umbral_qi = c["qi"].median()
-        origen_qi = "RESPALDO: mediana de todas las celdas (menos de 20 celdas con basalto)"
-    print(f"Umbral de cuarzo: QI ≤ {umbral_qi:.4f}  ({origen_qi})")
+    umbral_qi = QI_SIN_CUARZO
+    origen_qi = f"físico: QI ≤ {QI_SIN_CUARZO} sin cuarzo, ≤ {QI_CUARZO_PARCIAL} parcial"
+    print(f"Umbral de cuarzo: {origen_qi}")
+    print("  Sensibilidad (fracción de celdas 'sin cuarzo'):",
+          {t: round(float((c['qi'] <= t).mean()), 3) for t in (1.0, 1.005, 1.01, 1.015, 1.02)})
 
     def coincide(nivel_celda, objetivo, minimo=False):
         if minimo:   # "presente": basta con alcanzar el objetivo
@@ -343,7 +364,9 @@ def main(carpeta, region):
     c["s_carbonatos"] = coincide(c["nivel_carbonatos"], OBJETIVO["carbonatos"])
     c["s_arcillas_FeMg"] = coincide(c["nivel_arcillas_FeMg"], OBJETIVO["arcillas_FeMg"])
     c["s_arcillas_Al"] = coincide(c["nivel_arcillas_Al"], OBJETIVO["arcillas_Al"])
-    c["s_cuarzo"] = (c["qi"] <= umbral_qi).astype(float)
+    c["s_cuarzo"] = np.where(c["qi"] <= QI_SIN_CUARZO, 1.0,
+                             np.where(c["qi"] <= QI_CUARZO_PARCIAL, 0.5, 0.0))
+    c["s_micas_felsicas"] = coincide(c["nivel_micas_felsicas"], OBJETIVO["micas_felsicas"])
     c["bonus_sulfatos_Fe"] = np.where(c["nivel_sulfatos_Fe"] >= 1, BONUS_SULFATOS_FE, 0.0)
 
     suma_w = sum(PESOS.values()) + BONUS_SULFATOS_FE
@@ -352,7 +375,8 @@ def main(carpeta, region):
     cols = (["lat_centro", "lon_centro", "puntaje"] + [f"s_{k}" for k in PESOS] + ["bonus_sulfatos_Fe"]
             + [f"pct_{g}" for g in GRUPOS] + ["qi", "n_emit", "pct_agua", "elev_media_m",
                                               "pendiente_media_deg"])
-    celdas = c[cols].reset_index(drop=True).sort_values("puntaje", ascending=False)
+    celdas = (c[cols].reset_index(drop=True)
+              .sort_values(["puntaje", "pct_oxidos_Fe", "qi"], ascending=[False, False, True]))
     celdas.round(4).to_csv(out / f"celdas_{region}.csv", index=False)
 
     def explica(r):
@@ -383,6 +407,7 @@ def main(carpeta, region):
                           "pct_basalto": z["pct_basalto"].mean(),
                           "pct_sulfatos_Fe": z["pct_sulfatos_Fe"].mean(),
                           "pct_carbonatos": z["pct_carbonatos"].mean(),
+                          "pct_micas_felsicas": z["pct_micas_felsicas"].mean(),
                           "qi_medio": z["qi"].mean()})
         if filas:
             control = pd.DataFrame(filas).set_index("zona").round(4)
