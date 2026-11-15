@@ -1,0 +1,13 @@
+﻿metrica,descripcion,victoria,salar_uyuni,diferencia_salar_uyuni,diferencia_relativa_salar_uyuni,peso_en_similitud
+pendiente_mediana_deg,pendiente mediana (°),0.4298,2.175,1.7452,0.8024,1.0
+pendiente_p95_deg,pendiente p95 (°),1.2637,14.775,13.5113,0.9145,1.0
+rugosidad_mediana_m,rugosidad mediana 3×3 (m),0.1952,1.075,0.8798,0.8184,1.0
+rugosidad_p95_m,rugosidad p95 3×3 (m),0.5346,6.425,5.8904,0.9168,1.0
+pct_terreno_pendiente_lt_5deg,% del terreno con pendiente < 5°,99.9685,78.4137,-21.5548,,0.0
+relieve_1km_mediano_m,relieve mediano en bloques/celdas de 1 km (m),7.6021,14.0,6.3979,,0.0
+relieve_m,relieve total del área (m; depende del tamaño del área),71.3542,1476.0,1404.6458,,0.0
+similitud_terreno,similitud de terreno con Victoria (0 a 1),1.0,0.137,,,
+rango_general,lugar en el ranking de 6 regiones/zonas,,2.0,,,
+base,de dónde salen los datos,píxeles de 30 m · planicie_fuera_crater,píxeles ~30 m · región completa,,,
+nota,advertencias,,"incluye sierras y laderas: no hay planicie por píxel (vuelve a correr terreno.py); relieve_1km: mediana por celda de 1 km; relieve_m: de toda la región (1°×1°), no comparable con el área de Victoria",,,
+rugosidad_piso_dem_m,rugosidad del 1 % de celdas más planas (piso de ruido aproximado del DEM),,0.6234,,,

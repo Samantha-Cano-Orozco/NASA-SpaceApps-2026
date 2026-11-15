@@ -1,0 +1,7 @@
+region,conjunto,resolucion_m,n_pixeles,area_km2,pendiente_media_deg,pendiente_mediana_deg,pendiente_p95_deg,pendiente_max_deg,pct_terreno_pendiente_lt_5deg,rugosidad_media_m,rugosidad_mediana_m,rugosidad_p95_m,rugosidad_max_m,relieve_m,relieve_1km_mediano_m,bloques_1km,crater_lat,crater_lon_E,crater_profundidad_m,crater_diametro_borde_m,crater_dist_al_nominal_m,radio_exclusion_m,pendiente_planicie_deg
+victoria,escena_completa,30,74372,66.9348,0.6282,0.437,1.3275,31.9528,99.3385,0.2813,0.1992,0.5626,13.3538,76.6014,7.569,67,-2.0545,354.501,58.3649,855.0,271.7808,600.0,15.0
+victoria,planicie,30,74158,66.7422,0.5706,0.4356,1.3132,14.9736,99.6251,0.256,0.1977,0.5561,8.1908,76.6014,7.6351,65,-2.0545,354.501,58.3649,855.0,271.7808,600.0,15.0
+victoria,planicie_fuera_crater,30,73115,65.8035,0.5259,0.4298,1.2637,14.6852,99.9685,0.2349,0.1952,0.5346,5.9291,71.3542,7.6021,64,-2.0545,354.501,58.3649,855.0,271.7808,600.0,15.0
+victoria,escena_completa,90,7997,64.7757,0.5426,0.368,1.1895,19.3668,99.1872,0.7155,0.4843,1.5262,21.4045,74.6168,6.5331,67,-2.0545,354.501,58.3649,855.0,271.7808,600.0,15.0
+victoria,planicie,90,7979,64.6299,0.5069,0.3674,1.1734,14.9799,99.411,0.6789,0.4817,1.517,19.6523,74.6168,6.649,63,-2.0545,354.501,58.3649,855.0,271.7808,600.0,15.0
+victoria,planicie_fuera_crater,90,7853,63.6093,0.4453,0.3605,1.1178,2.859,100.0,0.585,0.4738,1.4234,3.0359,68.9956,6.5911,62,-2.0545,354.501,58.3649,855.0,271.7808,600.0,15.0

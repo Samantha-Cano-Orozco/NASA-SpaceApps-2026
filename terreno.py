@@ -20,6 +20,8 @@ SALIDAS (resultados_terreno/<region>/)
     terreno_resumen_<region>.csv   toda la región en una columna
     humedad_smap_<region>.csv      cada píxel SMAP dentro de la región, por fecha y pase
     mapa_terreno_<region>.png      elevación, pendiente, rugosidad y humedad
+    histogramas_<region>.npz       histogramas por PÍXEL de pendiente y rugosidad (toda la región y planicie
+                                   con pendiente < 15°), para comparar con Marte en la misma base
     Con varias regiones, además: resultados_terreno/resumen_terreno_regiones.csv (una columna por región)
 
 DEFINICIONES
@@ -55,8 +57,9 @@ PATRONES_DEM = ("*.hgt", "*.tif", "*.tiff")
 
 # Histogramas para percentiles de toda la región sin guardar millones de valores
 BORDES_ELEV = np.arange(-500, 9001, 1.0)
-BORDES_PEND = np.arange(0, 90.05, 0.05)
-BORDES_RUG = np.arange(0, 500.05, 0.05)
+BORDES_PEND = np.round(np.arange(0, 90.001, 0.01), 2)      # 0.01° (también se guardan en histogramas_<region>.npz)
+BORDES_RUG = np.round(np.arange(0, 500.001, 0.01), 2)      # 0.01 m
+PENDIENTE_PLANICIE = 15.0   # "planicie" = píxeles con pendiente < este valor (para comparar con Marte)
 
 pd.set_option("display.width", 220)
 pd.set_option("display.max_columns", None)
@@ -82,6 +85,15 @@ def percentil_hist(hist, bordes, q):
     acum = np.cumsum(hist) / hist.sum()
     i = min(int(np.searchsorted(acum, q / 100)), len(bordes) - 2)
     return float((bordes[i] + bordes[i + 1]) / 2)          # centro del intervalo del histograma
+
+
+def media_hist(hist, bordes):
+    return float(np.sum(hist * (bordes[:-1] + bordes[1:]) / 2) / hist.sum()) if hist.sum() else np.nan
+
+
+def max_hist(hist, bordes):
+    nz = np.nonzero(hist)[0]
+    return float(bordes[nz[-1] + 1]) if nz.size else np.nan
 
 
 def rugosidad(dem, ventana):
@@ -160,6 +172,10 @@ def procesar_dem(ruta, H):
                                (rug, "rug", BORDES_RUG)):
         v = arr[np.isfinite(arr)]
         H[clave] += np.histogram(np.clip(v, bordes[0], bordes[-1]), bordes)[0]
+    plan = np.isfinite(pend) & (pend < PENDIENTE_PLANICIE)
+    H["pend_plan"] += np.histogram(pend[plan], BORDES_PEND)[0]
+    rp = rug[plan & np.isfinite(rug)]
+    H["rug_plan"] += np.histogram(np.clip(rp, BORDES_RUG[0], BORDES_RUG[-1]), BORDES_RUG)[0]
     H["agua"] += int(agua.sum())
     H["px"] += int(np.isfinite(dem).sum())
 
@@ -279,7 +295,8 @@ def procesar_region(nombre, carpeta, salida, filtro_calidad):
     print(f"\n=== {nombre}: {len(dems)} DEM, {len(smaps)} SMAP ===")
 
     H = {"elev": np.zeros(len(BORDES_ELEV) - 1), "pend": np.zeros(len(BORDES_PEND) - 1),
-         "rug": np.zeros(len(BORDES_RUG) - 1), "agua": 0, "px": 0}
+         "rug": np.zeros(len(BORDES_RUG) - 1), "pend_plan": np.zeros(len(BORDES_PEND) - 1),
+         "rug_plan": np.zeros(len(BORDES_RUG) - 1), "agua": 0, "px": 0}
     partes, cajas = [], []
     for ruta in dems:
         t, caja = procesar_dem(ruta, H)
@@ -326,13 +343,22 @@ def procesar_region(nombre, carpeta, salida, filtro_calidad):
          "elev_p95_m": percentil_hist(H["elev"], BORDES_ELEV, 95),
          "relieve_desv_est_m": float(np.sqrt(np.sum(H["elev"] * centros_e ** 2) / tot_e
                                              - (np.sum(H["elev"] * centros_e) / tot_e) ** 2)) if tot_e else np.nan,
-         "pendiente_media_deg": float(np.sum(H["pend"] * (BORDES_PEND[:-1] + 0.025)) / H["pend"].sum()),
+         "pendiente_media_deg": media_hist(H["pend"], BORDES_PEND),
          "pendiente_mediana_deg": percentil_hist(H["pend"], BORDES_PEND, 50),
          "pendiente_p95_deg": percentil_hist(H["pend"], BORDES_PEND, 95),
+         "pendiente_max_deg": max_hist(H["pend"], BORDES_PEND),
          "pct_terreno_pendiente_lt_5deg": 100 * H["pend"][BORDES_PEND[:-1] < 5].sum() / H["pend"].sum(),
-         "rugosidad_media_m": float(np.sum(H["rug"] * (BORDES_RUG[:-1] + 0.025)) / H["rug"].sum()),
+         "rugosidad_media_m": media_hist(H["rug"], BORDES_RUG),
          "rugosidad_mediana_m": percentil_hist(H["rug"], BORDES_RUG, 50),
          "rugosidad_p95_m": percentil_hist(H["rug"], BORDES_RUG, 95),
+         "rugosidad_max_m": max_hist(H["rug"], BORDES_RUG),
+         "pct_terreno_planicie": 100 * H["pend_plan"].sum() / H["pend"].sum(),
+         "planicie_pendiente_mediana_deg": percentil_hist(H["pend_plan"], BORDES_PEND, 50),
+         "planicie_pendiente_p95_deg": percentil_hist(H["pend_plan"], BORDES_PEND, 95),
+         "planicie_pct_terreno_pendiente_lt_5deg": 100 * H["pend_plan"][BORDES_PEND[:-1] < 5].sum()
+                                                   / H["pend_plan"].sum(),
+         "planicie_rugosidad_mediana_m": percentil_hist(H["rug_plan"], BORDES_RUG, 50),
+         "planicie_rugosidad_p95_m": percentil_hist(H["rug_plan"], BORDES_RUG, 95),
          "pct_agua": 100 * H["agua"] / H["px"] if H["px"] else np.nan,
          "ventana_rugosidad_px": VENTANA_RUGOSIDAD,
          "smap_archivos": len(smaps),
@@ -359,6 +385,9 @@ def procesar_region(nombre, carpeta, salida, filtro_calidad):
         print("  sin datos SMAP dentro de la región")
     resumen = pd.Series(r, name=nombre)
     resumen.to_frame("region_completa").to_csv(out / f"terreno_resumen_{nombre}.csv")
+    np.savez_compressed(out / f"histogramas_{nombre}.npz", bordes_pend=BORDES_PEND, bordes_rug=BORDES_RUG,
+                        hist_pend=H["pend"], hist_rug=H["rug"], hist_pend_planicie=H["pend_plan"],
+                        hist_rug_planicie=H["rug_plan"], pendiente_planicie_deg=PENDIENTE_PLANICIE)
     figura(c, nombre, out)
 
     print(resumen.to_string())
