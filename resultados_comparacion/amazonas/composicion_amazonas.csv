@@ -1,0 +1,16 @@
+dato,marte_meridiani,amazonas
+lat / lon,−2.05 / 354.5 °E (cráter Victoria),-5.0…-3.4 / -67.0…-66.0
+elev_media_m,—,85.9
+celdas_validas,4 escenas CRISM + mapas TES,5281
+pct_oxidos_Fe,dominante (BD530_2 0.181); TES hematita 14.2 %,0.0314
+pct_oxidos_finos_de_los_oxidos,CRISM ve óxidos finos; TES ve hematita gruesa (gris),63.3
+pct_carbonatos,ausente (0 %),7.0588
+pct_arcillas_FeMg,ausente (0.001 %),10.8151
+pct_arcillas_Al,"traza (1.01 %, 1 escena)",0.0002
+pct_micas_felsicas,ausente (supuesto: Meridiani es basáltico),0.0068
+pct_basalto_EMIT,CRISM piroxeno/olivino ausentes en superficie,0.0165
+pct_sulfatos_Fe,CRISM ausente (0.09 %); jarosita in situ (Opportunity),0.0002
+pct_yeso_sulfatos,ausente,0.0
+indice_cuarzo_medio,TES cuarzo 0 % (no detectado),1.0025
+indice_mafico_medio,"TES plagioclasa 8.8 %, piroxeno 5.2 %",0.9816
+pct_celdas_basalto_aster,basáltico,89.07

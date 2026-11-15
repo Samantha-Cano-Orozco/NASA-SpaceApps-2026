@@ -1,0 +1,4 @@
+zona,n_celdas,similitud_pct,similitud_mediana_pct,pct_celdas_sim_ge_80,lat,lon,elev_mediana_m
+region_completa,8135,75.95,75.0,15.32,-20.46,-67.51,3659.97
+top10,10,100.0,100.0,100.0,-20.24,-67.21,3659.3
+mejor_celda,1,100.0,100.0,100.0,-20.18,-67.11,3659.21
