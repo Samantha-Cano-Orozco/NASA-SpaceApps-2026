@@ -1,5 +1,5 @@
 """
-minerologia2.py  —  Space Apps 2026 · Análogos de Marte (suelos)
+minerologia2.py (v4: filtros de suelo expuesto)  —  Space Apps 2026 · Análogos de Marte (suelos)
 Compara una región de la Tierra contra la huella mineral de Meridiani (Marte).
 
 USO
@@ -59,6 +59,14 @@ AVISO_PCT_MAFICO = 50.0         # > este % de celdas con MI ≥ MI_BASALTO: vege
 AVISO_PCT_DETECCION_EMIT = 40.0 # EMIT detecta minerales en < este % de píxeles: vegetación, nubes o suelo oscuro
 AVISO_HUMEDAD_SMAP = 0.25       # m³/m³: suelo húmedo, la emisividad térmica se aplana
 AVISO_PCT_DESCARTE_ELEV = 30.0  # el filtro de altura quita > este % de celdas: ¿región baja?
+
+# ---- Filtros de "suelo expuesto" (v4) ----
+# Sin estos filtros, una superficie donde los sensores NO ven suelo (selva, agua, suelo húmedo) sacaba ~75 %:
+# EMIT no detecta nada -> los criterios "ausente" coinciden; ASTER ve un espectro plano -> QI ≈ 1 ("sin cuarzo")
+# y MI ≈ 1 ("basalto"). Ahora esas celdas no se califican.
+MAX_NDVI_CELDA = 0.25           # NDVI medio de ASTER GED por celda; arriba = vegetación -> no se califica
+MIN_PCT_DETECCION_CELDA = 50.0  # % mínimo de píxeles EMIT de la celda con algún mineral detectado
+MIN_PCT_CELDAS_EVALUABLES = 10.0  # si quedan menos de este % de las celdas candidatas: región "no evaluable"
 LWMAP_AGUA = 1              # 1 = agua en AG100
 SWB_AGUA = 255              # 255 = agua en .swb
 ESCALA_EMIS, VACIO_EMIS = 0.001, -9999
@@ -115,20 +123,23 @@ ZONAS_CONTROL_POR_REGION = {
 # micas_felsicas va ANTES de las arcillas, y sus minerales (biotita, flogopita, moscovita, sericita)
 # ya no están repetidos en arcillas_FeMg ni arcillas_Al.
 REGLAS_GRUPO = [
-    ("excluir",        ["cyanide", "plastic", "wtc", "coated", "renyolds", "reynolds", "sludge", "paint"]),
+    ("excluir",        ["cyanide", "plastic", "wtc", "coated_steel", "girder", "renyolds", "reynolds", "sludge",
+                        "paint", "plywood", "grass", "green_slime", "neodymium", "transm", "tailngs", "unleaded"]),
     ("sulfatos_Fe",    ["jarosit", "copiapit", "butlerit", "schwertmann", "coquimbit", "fibroferrit",
                         "rozenit", "melanterit", "szomolnokit", "botryogen"]),
     ("yeso_sulfatos",  ["gypsum", "anhydrit", "bassanit", "alunit", "polyhalit", "epsomit", "kieserit"]),
-    ("oxidos_Fe",      ["hematit", "nhematit", "goethit", "ferrihydrit", "lepidocrocit", "maghemit",
-                        "magnetit"]),
-    ("carbonatos",     ["calcit", "dolomit", "siderit", "magnesit", "ankerit", "aragonit", "rhodochrosit"]),
-    ("micas_felsicas", ["muscovit", "sericit", "biotit", "phlogopit", "lepidolit",
-                        "orthoclas", "microclin", "albit", "feldspar"]),
-    ("arcillas_FeMg",  ["chlorit", "clinochlor", "chamosit", "vermiculit", "nontronit", "saponit",
-                        "serpentin", "talc"]),
-    ("arcillas_Al",    ["kaolin", "montmor", "illit", "halloysit", "dickit", "pyrophyllit",
-                        "beidellit", "smectit"]),
-    ("basalto",        ["basalt", "pyroxen", "augit", "olivin"]),
+    ("oxidos_Fe",      ["hematit", "nhematit", "goethit", "goeth", "ferrihydrit", "lepidocro", "maghemit",
+                        "magnetit", "fe-hydroxide", "limonit"]),
+    # micas ANTES de carbonatos: si no, "paragonite" cae en "aragonit"
+    ("micas_felsicas", ["muscovit", "muscov", "musc", "paragonit", "margarit", "roscoelit", "sericit",
+                        "biotit", "phlogopit", "lepidolit", "orthoclas", "microclin", "albit", "feldspar"]),
+    ("carbonatos",     ["calcit", "calc.", "calc+", "dolomit", "dolo", "siderit", "magnesit", "ankerit",
+                        "aragonit", "rhodochrosit", "witherit", "strontianit"]),
+    ("arcillas_FeMg",  ["chlorit", "chlor+", "clinochlor", "chamosit", "vermiculit", "nontronit", "saponit",
+                        "serpentin", "talc", "cronstedtit", "thuringit"]),
+    ("arcillas_Al",    ["kaolin", "kaol", "montmor", "illit", "halloysit", "dickit", "pyrophyllit",
+                        "beidellit", "smectit", "nacrit", "hectorit"]),
+    ("basalto",        ["basalt", "pyroxen", "augit", "olivin", "hypersthen", "pigeonit", "diopsid"]),
 ]
 GRUPOS = ["oxidos_Fe", "sulfatos_Fe", "yeso_sulfatos", "carbonatos", "arcillas_FeMg",
           "arcillas_Al", "basalto", "micas_felsicas", "otros"]
@@ -145,10 +156,35 @@ def grupo_de(nombre):
     n = nombre.strip().lower()
     if n in {"fe", "fe_oxide", "fe-oxide"} or n.startswith("fe_") or n.startswith("fe "):
         return "oxidos_Fe"
+    reglas = dict(REGLAS_GRUPO)
+    if any(k in n for k in reglas["excluir"]):          # basura / muestras artificiales: nombre completo
+        return "excluir"
+    primero = re.split(r"[+\s]", n)[0]                  # en mezclas manda el primer mineral (el dominante)
     for grupo, claves in REGLAS_GRUPO:
+        if any(k in primero for k in claves):
+            return grupo
+    for grupo, claves in REGLAS_GRUPO:                   # si el primero no se reconoce, todo el nombre
         if any(k in n for k in claves):
             return grupo
     return "otros"
+
+
+def buscar_ndvi(f):
+    """Ruta del NDVI medio dentro de un ASTER GED (.h5), o None si no lo trae."""
+    rutas = []
+    f.visit(lambda n: rutas.append(n) if isinstance(f[n], h5py.Dataset) and "ndvi" in n.lower() else None)
+    medias = [r for r in rutas if "mean" in r.lower()]
+    return (medias or rutas or [None])[0]
+
+
+def puntaje_superficie_vacia():
+    """Puntaje que saca una celda donde EMIT no detecta nada y ASTER ve un espectro plano (QI = MI = 1)."""
+    s = {"oxidos_Fe": 1.0 if OBJETIVO["oxidos_Fe"] == 0 else (0.5 if OBJETIVO["oxidos_Fe"] == 1 else 0.0),
+         "cuarzo": 1.0 if 1.0 <= QI_SIN_CUARZO else 0.0,
+         "basalto": 1.0 if 1.0 >= MI_BASALTO else 0.0}
+    for k in ("carbonatos", "arcillas_FeMg", "arcillas_Al", "micas_felsicas"):
+        d = abs(0 - OBJETIVO[k]); s[k] = 1.0 if d == 0 else (0.5 if d == 1 else 0.0)
+    return sum(PESOS[k] * s[k] for k in PESOS) / (sum(PESOS.values()) + BONUS_SULFATOS_FE)
 
 
 def limites_zona(nombre):
@@ -361,6 +397,7 @@ def main(carpeta, region, min_elev="auto", salida="resultados_tierra"):
     # QI = b11² / (b10 · b12). El cuarzo tiene mínimos de emisividad cerca de 8.3 µm (b10)
     # y 9.1 µm (b12), así que QI SUBE con más cuarzo. Ref.: Ninomiya et al. (2005).
     ast = []
+    hay_ndvi = False
     em_sum = np.zeros(5); em_n = np.zeros(5)
     for h5 in sorted(carpeta.glob("AG100*.h5")):
         with h5py.File(h5, "r") as f:
@@ -368,6 +405,16 @@ def main(carpeta, region, min_elev="auto", salida="resultados_tierra"):
             lat = f["Geolocation/Latitude"][()].astype("float64")
             lon = f["Geolocation/Longitude"][()].astype("float64")
             lw = f["Land Water Map/LWmap"][()]
+            ruta_ndvi = buscar_ndvi(f)
+            ndvi = f[ruta_ndvi][()].astype("float64") if ruta_ndvi else None
+        if ndvi is not None:
+            ndvi[(ndvi <= -9999) | ~np.isfinite(ndvi)] = np.nan
+            if np.nanmax(np.abs(ndvi)) > 1.5:            # viene escalado (×100 en ASTER GED)
+                ndvi = ndvi * 0.01
+            hay_ndvi = True
+        else:
+            ndvi = np.full(lw.shape, np.nan)
+            avisos.append(f"{h5.name} no trae NDVI: no se pudo filtrar vegetación con ASTER")
         if em.shape[0] != 5 and em.shape[-1] == 5:
             em = np.moveaxis(em, -1, 0)
         em[em == VACIO_EMIS] = np.nan
@@ -379,9 +426,10 @@ def main(carpeta, region, min_elev="auto", salida="resultados_tierra"):
         qi = em[1] ** 2 / (em[0] * em[2])
         mi = em[2] * em[4] ** 3 / em[3] ** 4          # índice máfico (Ninomiya et al. 2005)
         ci, cj = clave_celda(lat[dentro], lon[dentro])
-        q, mf = qi[dentro], mi[dentro]
+        q, mf, nd = qi[dentro], mi[dentro], ndvi[dentro]
         acumular(ast, ci, cj, qi_s=np.nan_to_num(q), qi_n=np.isfinite(q).astype(float),
-                 mi_s=np.nan_to_num(mf), mi_n=np.isfinite(mf).astype(float))
+                 mi_s=np.nan_to_num(mf), mi_n=np.isfinite(mf).astype(float),
+                 nd_s=np.nan_to_num(nd), nd_n=np.isfinite(nd).astype(float))
         for b in range(5):
             v = em[b][dentro]; v = v[np.isfinite(v)]
             em_sum[b] += v.sum(); em_n[b] += v.size
@@ -400,6 +448,8 @@ def main(carpeta, region, min_elev="auto", salida="resultados_tierra"):
     c["pendiente_media_deg"] = c["pend_s"] / c["pend_n"].replace(0, np.nan)
     c["qi"] = c["qi_s"] / c["qi_n"].replace(0, np.nan)
     c["mi"] = c["mi_s"] / c["mi_n"].replace(0, np.nan)
+    c["ndvi"] = c["nd_s"] / c["nd_n"].replace(0, np.nan)
+    c["pct_det_emit"] = 100 * c["n_det"] / c["n_emit"].replace(0, np.nan)
     for g in GRUPOS:
         c[f"pct_{g}"] = 100 * c[f"n_{g}"] / c["n_emit"].replace(0, np.nan)
 
@@ -414,12 +464,43 @@ def main(carpeta, region, min_elev="auto", salida="resultados_tierra"):
         if pct_bajas > AVISO_PCT_DESCARTE_ELEV:
             avisos.append(f"el filtro de altura (≥{min_elev:g} m) quitó {pct_bajas:.0f} % de las celdas; "
                           f"si la región es baja, corre con --min-elev no")
-    print(f"\nCeldas: {len(c):,} en total, {int(validas.sum()):,} válidas "
+    n_candidatas = int(validas.sum())
+    # Suelo expuesto: sin vegetación (NDVI de ASTER) y con minerales detectados por EMIT
+    veg = validas & (c["ndvi"] > MAX_NDVI_CELDA)                 # NaN (sin NDVI) no descarta
+    validas &= ~veg
+    sin_det = validas & ~(c["pct_det_emit"] >= MIN_PCT_DETECCION_CELDA)
+    validas &= ~sin_det
+    n_validas = int(validas.sum())
+    pct_eval = 100 * n_validas / n_candidatas if n_candidatas else 0.0
+    base = puntaje_superficie_vacia()
+    print(f"\nCeldas: {len(c):,} en total, {n_candidatas:,} candidatas "
           f"(≥{MIN_PIX_EMIT_CELDA} px EMIT, ≤{MAX_AGUA_CELDA}% agua{texto_elev}, con ASTER)")
+    print(f"  descartadas por vegetación (NDVI > {MAX_NDVI_CELDA}): {int(veg.sum()):,}"
+          f"{'' if hay_ndvi else '  (sin NDVI en los AG100: filtro no aplicado)'}")
+    print(f"  descartadas por poca detección EMIT (< {MIN_PCT_DETECCION_CELDA:g} % de píxeles): {int(sin_det.sum()):,}")
+    print(f"  válidas (suelo expuesto): {n_validas:,} = {pct_eval:.1f} % de las candidatas")
+    print(f"  línea base: una superficie sin datos sacaría {100 * base:.1f} %")
+    filtros = {"celdas_candidatas": n_candidatas, "celdas_descartadas_vegetacion": int(veg.sum()),
+               "celdas_descartadas_sin_deteccion": int(sin_det.sum()), "celdas_validas": n_validas,
+               "pct_celdas_evaluables": round(pct_eval, 2), "max_ndvi_celda": MAX_NDVI_CELDA,
+               "min_pct_deteccion_celda": MIN_PCT_DETECCION_CELDA, "ndvi_disponible": hay_ndvi,
+               "linea_base_pct": round(100 * base, 2)}
+    if n_validas == 0 or pct_eval < MIN_PCT_CELDAS_EVALUABLES:
+        motivo = (f"solo {pct_eval:.1f} % de las celdas tiene suelo expuesto "
+                  f"(vegetación: {int(veg.sum()):,}, sin detección EMIT: {int(sin_det.sum()):,}); "
+                  f"mínimo {MIN_PCT_CELDAS_EVALUABLES:g} %")
+        for viejo in out.glob(f"*_{region}.*"):          # quita salidas de corridas anteriores
+            if not viejo.name.startswith("mapeo_emit_grupos_"):
+                viejo.unlink()
+        resumen = {"evaluable": "no", "motivo_no_evaluable": motivo, **filtros,
+                   "criterio_deteccion_emit": "; ".join(sorted(criterio_usado)),
+                   "avisos": " | ".join(avisos) or "ninguno"}
+        pd.DataFrame({"region_completa": resumen}).to_csv(out / f"resumen_region_{region}.csv")
+        print(f"\n*** REGIÓN NO EVALUABLE: {motivo}")
+        print("    No se calcula similitud: los sensores no ven suelo suficiente para compararlo con Marte.")
+        print(f"\nArchivos guardados en {out.resolve()}")
+        return
     c = c[validas].copy()
-    if c.empty:
-        raise SystemExit("No quedó ninguna celda válida; revisa que EMIT y ASTER cubran el área"
-                         + (" o prueba con --min-elev no" if min_elev is not None else ""))
 
     for g in OBJETIVO:
         c[f"nivel_{g}"] = nivel(c[f"pct_{g}"])
@@ -457,8 +538,8 @@ def main(carpeta, region, min_elev="auto", salida="resultados_tierra"):
     c["puntaje"] = (sum(PESOS[k] * c[f"s_{k}"] for k in PESOS) + c["bonus_sulfatos_Fe"]) / suma_w
 
     cols = (["lat_centro", "lon_centro", "puntaje"] + [f"s_{k}" for k in PESOS] + ["bonus_sulfatos_Fe"]
-            + [f"pct_{g}" for g in GRUPOS] + ["qi", "mi", "n_emit", "pct_agua", "elev_media_m",
-                                              "pendiente_media_deg"])
+            + [f"pct_{g}" for g in GRUPOS] + ["qi", "mi", "ndvi", "pct_det_emit", "n_emit", "pct_agua",
+                                              "elev_media_m", "pendiente_media_deg"])
     celdas = (c[cols].reset_index(drop=True)
               # Desempate continuo: más máfico (MI), luego menos cuarzo (QI), luego más óxidos de Fe
               .sort_values(["puntaje", "mi", "qi", "pct_oxidos_Fe"], ascending=[False, False, True, False])
@@ -525,7 +606,8 @@ def main(carpeta, region, min_elev="auto", salida="resultados_tierra"):
     # -------------------------------------------------
     # 6) RESUMEN DE TODA LA REGIÓN (una columna)
     # -------------------------------------------------
-    resumen = {"criterio_deteccion_emit": "; ".join(sorted(criterio_usado)),
+    resumen = {"evaluable": "sí", "motivo_no_evaluable": "", **filtros,
+               "criterio_deteccion_emit": "; ".join(sorted(criterio_usado)),
                "emit_pixeles_validos": int(tot["n_emit"]),
                "emit_pct_pixeles_con_deteccion": round(pct_det, 2)}
     for g in GRUPOS:
@@ -546,9 +628,10 @@ def main(carpeta, region, min_elev="auto", salida="resultados_tierra"):
     resumen["pct_agua_region"] = round(100 * agua_total / px_total, 2)
     resumen["elev_media_m"] = round(terr["elev_s"].sum() / terr["elev_n"].sum(), 1)
     resumen["pendiente_media_deg"] = round(terr["pend_s"].sum() / terr["pend_n"].sum(), 2)
-    resumen["celdas_validas"] = len(celdas)
     resumen["puntaje_medio"] = round(celdas["puntaje"].mean(), 4)
     resumen["puntaje_max"] = round(celdas["puntaje"].max(), 4)
+    resumen["similitud_media_pct"] = round(100 * celdas["puntaje"].mean(), 2)
+    resumen["ganancia_sobre_base_pct"] = round(100 * (celdas["puntaje"].mean() - base) / (1 - base), 2)
     resumen.update(smap)
     resumen["avisos"] = " | ".join(avisos) or "ninguno"
     pd.DataFrame({"region_completa": resumen}).to_csv(out / f"resumen_region_{region}.csv")
