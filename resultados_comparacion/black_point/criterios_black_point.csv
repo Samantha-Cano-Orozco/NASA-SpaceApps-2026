@@ -1,21 +1,21 @@
 zona,criterio,peso,objetivo_marte,valor_tierra,coincidencia_pct,puntos_perdidos
-region_completa,oxidos_Fe,3,dominante,66.8 % píxeles EMIT,91.38,1.85
-region_completa,cuarzo,3,ausente,QI 1.0044 (79 % celdas sin cuarzo),87.12,2.76
-region_completa,basalto,2,presente,MI 0.966 (47 % celdas basalto),65.81,4.88
-region_completa,carbonatos,2,ausente,81.9 % píxeles EMIT,4.03,13.71
-region_completa,arcillas_FeMg,2,ausente,1.4 % píxeles EMIT,90.02,1.43
-region_completa,arcillas_Al,1,traza,0.3 % píxeles EMIT,52.78,3.37
-region_completa,micas_felsicas,1,ausente,5.1 % píxeles EMIT,80.84,1.37
-top10,oxidos_Fe,3,dominante,92.1 % píxeles EMIT,100.0,0.0
-top10,cuarzo,3,ausente,QI 0.9965 (100 % celdas sin cuarzo),100.0,0.0
-top10,basalto,2,presente,MI 0.987 (100 % celdas basalto),100.0,0.0
+region_completa,oxidos_Fe,3,dominante,68.0 % píxeles EMIT,92.36,1.64
+region_completa,cuarzo,3,ausente,QI 1.0045 (79 % celdas sin cuarzo),86.93,2.8
+region_completa,basalto,2,presente,MI 0.965 (47 % celdas basalto),65.39,4.94
+region_completa,carbonatos,2,ausente,83.0 % píxeles EMIT,3.66,13.76
+region_completa,arcillas_FeMg,2,ausente,3.8 % píxeles EMIT,80.04,2.85
+region_completa,arcillas_Al,1,traza,1.2 % píxeles EMIT,54.43,3.26
+region_completa,micas_felsicas,1,ausente,5.2 % píxeles EMIT,80.83,1.37
+top10,oxidos_Fe,3,dominante,88.4 % píxeles EMIT,100.0,0.0
+top10,cuarzo,3,ausente,QI 0.9934 (100 % celdas sin cuarzo),100.0,0.0
+top10,basalto,2,presente,MI 0.986 (100 % celdas basalto),100.0,0.0
 top10,carbonatos,2,ausente,0.1 % píxeles EMIT,100.0,0.0
 top10,arcillas_FeMg,2,ausente,0.0 % píxeles EMIT,100.0,0.0
 top10,arcillas_Al,1,traza,0.0 % píxeles EMIT,50.0,3.57
 top10,micas_felsicas,1,ausente,0.0 % píxeles EMIT,100.0,0.0
-mejor_celda,oxidos_Fe,3,dominante,95.8 % píxeles EMIT,100.0,0.0
-mejor_celda,cuarzo,3,ausente,QI 0.9995 (100 % celdas sin cuarzo),100.0,0.0
-mejor_celda,basalto,2,presente,MI 0.989 (100 % celdas basalto),100.0,0.0
+mejor_celda,oxidos_Fe,3,dominante,90.4 % píxeles EMIT,100.0,0.0
+mejor_celda,cuarzo,3,ausente,QI 0.9944 (100 % celdas sin cuarzo),100.0,0.0
+mejor_celda,basalto,2,presente,MI 0.988 (100 % celdas basalto),100.0,0.0
 mejor_celda,carbonatos,2,ausente,0.3 % píxeles EMIT,100.0,0.0
 mejor_celda,arcillas_FeMg,2,ausente,0.0 % píxeles EMIT,100.0,0.0
 mejor_celda,arcillas_Al,1,traza,0.0 % píxeles EMIT,50.0,3.57

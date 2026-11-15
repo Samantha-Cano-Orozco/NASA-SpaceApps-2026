@@ -1,16 +1,16 @@
 dato,marte_meridiani,salar_uyuni
 lat / lon,−2.05 / 354.5 °E (cráter Victoria),-21.0…-20.0 / -68.0…-67.0
 elev_media_m,—,3699.0
-celdas_validas,4 escenas CRISM + mapas TES,8135
-pct_oxidos_Fe,dominante (BD530_2 0.181); TES hematita 14.2 %,8.392
-pct_oxidos_finos_de_los_oxidos,CRISM ve óxidos finos; TES ve hematita gruesa (gris),71.6
-pct_carbonatos,ausente (0 %),3.1628
-pct_arcillas_FeMg,ausente (0.001 %),0.3734
-pct_arcillas_Al,"traza (1.01 %, 1 escena)",0.7133
-pct_micas_felsicas,ausente (supuesto: Meridiani es basáltico),0.396
-pct_basalto_EMIT,CRISM piroxeno/olivino ausentes en superficie,0.7363
+celdas_validas,4 escenas CRISM + mapas TES,2197
+pct_oxidos_Fe,dominante (BD530_2 0.181); TES hematita 14.2 %,8.5782
+pct_oxidos_finos_de_los_oxidos,CRISM ve óxidos finos; TES ve hematita gruesa (gris),72.2
+pct_carbonatos,ausente (0 %),3.1788
+pct_arcillas_FeMg,ausente (0.001 %),5.2988
+pct_arcillas_Al,"traza (1.01 %, 1 escena)",0.6959
+pct_micas_felsicas,ausente (supuesto: Meridiani es basáltico),0.3985
+pct_basalto_EMIT,CRISM piroxeno/olivino ausentes en superficie,2.625
 pct_sulfatos_Fe,CRISM ausente (0.09 %); jarosita in situ (Opportunity),2.6171
 pct_yeso_sulfatos,ausente,0.0676
 indice_cuarzo_medio,TES cuarzo 0 % (no detectado),0.9971
 indice_mafico_medio,"TES plagioclasa 8.8 %, piroxeno 5.2 %",0.9861
-pct_celdas_basalto_aster,basáltico,90.17
+pct_celdas_basalto_aster,basáltico,89.12

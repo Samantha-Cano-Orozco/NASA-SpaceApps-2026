@@ -1,6 +1,6 @@
-zona,n_celdas,similitud_pct,similitud_mediana_pct,pct_celdas_sim_ge_80,lat,lon,elev_mediana_m
-region_completa,15301,60.03,57.14,2.72,32.05,-113.97,118.68
-lava_pinacate,751,69.4,71.43,5.46,31.72,-113.45,182.38
-dunas_altar,1750,56.16,53.57,0.0,32.12,-114.35,88.26
-top10,10,90.72,89.29,100.0,32.07,-114.08,31.0
-mejor_celda,1,92.86,92.86,100.0,32.58,-114.74,30.14
+zona,n_celdas,similitud_pct,similitud_mediana_pct,pct_celdas_sim_ge_80,lat,lon,elev_mediana_m,linea_base_pct,ganancia_sobre_base_pct
+region_completa,14442,59.25,57.14,1.9,32.06,-113.98,122.86,75.0,-62.99
+lava_pinacate,651,69.35,71.43,3.53,31.73,-113.46,183.74,75.0,-22.6
+dunas_altar,1736,55.47,53.57,0.0,32.13,-114.35,88.53,75.0,-78.12
+top10,10,90.0,89.29,100.0,32.1,-114.07,82.54,75.0,60.02
+mejor_celda,1,92.86,92.86,100.0,32.52,-114.78,26.52,75.0,71.44

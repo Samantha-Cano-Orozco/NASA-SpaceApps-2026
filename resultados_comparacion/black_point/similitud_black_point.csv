@@ -1,4 +1,4 @@
-zona,n_celdas,similitud_pct,similitud_mediana_pct,pct_celdas_sim_ge_80,lat,lon,elev_mediana_m
-region_completa,8978,70.63,75.0,26.44,36.51,-114.5,714.02
-top10,10,96.43,96.43,100.0,36.06,-114.92,589.5
-mejor_celda,1,96.43,96.43,100.0,36.02,-114.98,660.26
+zona,n_celdas,similitud_pct,similitud_mediana_pct,pct_celdas_sim_ge_80,lat,lon,elev_mediana_m,linea_base_pct,ganancia_sobre_base_pct
+region_completa,8843,69.38,71.43,23.89,36.51,-114.5,713.02,75.0,-22.48
+top10,10,96.43,96.43,100.0,36.09,-114.85,614.62,75.0,85.72
+mejor_celda,1,96.43,96.43,100.0,36.1,-114.86,547.92,75.0,85.72
