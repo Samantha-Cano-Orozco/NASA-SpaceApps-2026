@@ -7,7 +7,7 @@ pct_terreno_pendiente_lt_5deg,% del terreno con pendiente < 5°,99.9685,40.044,-
 relieve_1km_mediano_m,relieve mediano en bloques/celdas de 1 km (m),7.6021,93.0,85.3979,,0.0
 relieve_m,relieve total del área (m; depende del tamaño del área),71.3542,3861.0,3789.6458,,0.0
 similitud_terreno,similitud de terreno con Victoria (0 a 1),1.0,0.0514,,,
-rango_general,lugar en el ranking de 6 regiones/zonas,,6.0,,,
+rango_general,lugar en el ranking de 7 regiones/zonas,,7.0,,,
 base,de dónde salen los datos,píxeles de 30 m · planicie_fuera_crater,píxeles ~30 m · región completa,,,
 nota,advertencias,,"incluye sierras y laderas: no hay planicie por píxel (vuelve a correr terreno.py); relieve_1km: mediana por celda de 1 km; relieve_m: de toda la región (1°×2°), no comparable con el área de Victoria",,,
 rugosidad_piso_dem_m,rugosidad del 1 % de celdas más planas (piso de ruido aproximado del DEM),,0.5905,,,

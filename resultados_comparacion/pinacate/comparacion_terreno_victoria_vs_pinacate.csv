@@ -7,7 +7,7 @@ pct_terreno_pendiente_lt_5deg,% del terreno con pendiente < 5°,99.9685,82.0844,
 relieve_1km_mediano_m,relieve mediano en bloques/celdas de 1 km (m),7.6021,19.0,11.3979,,44.0,36.3979,,28.0,20.3979,,0.0
 relieve_m,relieve total del área (m; depende del tamaño del área),71.3542,1262.0,1190.6458,,1001.0,929.6458,,413.0,341.6458,,0.0
 similitud_terreno,similitud de terreno con Victoria (0 a 1),1.0,0.1371,,,0.1358,,,0.1194,,,
-rango_general,lugar en el ranking de 6 regiones/zonas,,1.0,,,3.0,,,4.0,,,
+rango_general,lugar en el ranking de 7 regiones/zonas,,2.0,,,4.0,,,5.0,,,
 base,de dónde salen los datos,píxeles de 30 m · planicie_fuera_crater,píxeles ~30 m · región completa,,,promedio por celda de 1 km · planicie (< 15°),,,promedio por celda de 1 km · planicie (< 15°),,,
 nota,advertencias,,"incluye sierras y laderas: no hay planicie por píxel (vuelve a correr terreno.py); relieve_1km: mediana por celda de 1 km; relieve_m: de toda la región (2°×2°), no comparable con el área de Victoria",,,promedios por celda de 1 km de píxeles de 30 m: suaviza la distribución (p95 y rugosidad quedan subestimados); no es la misma base que Victoria,,,promedios por celda de 1 km de píxeles de 30 m: suaviza la distribución (p95 y rugosidad quedan subestimados); no es la misma base que Victoria,,,
 rugosidad_piso_dem_m,rugosidad del 1 % de celdas más planas (piso de ruido aproximado del DEM),,0.6324,,,0.6324,,,0.6324,,,

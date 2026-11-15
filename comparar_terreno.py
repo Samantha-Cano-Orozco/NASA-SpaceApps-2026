@@ -30,7 +30,7 @@ SALIDAS (<carpeta>/comparacion/)
     ranking_terreno.png                barras con la similitud de cada región/zona
     histogramas_terreno.png            distribución de pendiente y rugosidad: Victoria vs cada región/zona
 
-    Y una carpeta por cada comparación Marte–lugar de la Tierra (resultados_comparacion/victoria_vs_<region>/):
+    Y una carpeta por cada comparación Marte–lugar de la Tierra (resultados_comparacion/<region>/):
     comparacion_terreno_victoria_vs_<region>.csv   métrica por métrica: Victoria, la región y sus zonas,
                                                    diferencia (Tierra − Victoria), diferencia relativa, similitud
     histogramas_victoria_vs_<region>.png           pendiente y rugosidad: Victoria vs ese lugar
@@ -218,7 +218,7 @@ def main(carpeta, salida_lugares):
 def por_lugar(t, ref, hists, dist_v, base):
     """Una carpeta por región de la Tierra: Victoria vs esa región (y sus zonas)."""
     for region, g in t.groupby("region", sort=False):
-        out = base / f"{REGION_MARTE}_vs_{region}"
+        out = base / region
         out.mkdir(parents=True, exist_ok=True)
         g = g.sort_values("tipo", key=lambda s: s.map({"región": 0, "zona": 1}))
         nombres = [r["lugar"].replace(" · ", "_").replace(" ", "_") for _, r in g.iterrows()]
