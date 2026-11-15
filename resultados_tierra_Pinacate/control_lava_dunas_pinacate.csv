@@ -1,3 +1,3 @@
-zona,n_celdas,puntaje_medio,pct_oxidos_Fe,pct_basalto,pct_sulfatos_Fe,pct_carbonatos,pct_micas_felsicas,qi_medio,mi_medio,pct_celdas_basalto_aster
-lava_pinacate,751,0.692,72.1708,1.7836,1.0624,13.5863,22.2342,1.0019,0.9665,72.3036
-dunas_altar,1750,0.5174,96.1584,1.0693,0.1066,3.7446,93.0523,1.0319,0.8523,0.0
+zona,n_celdas,puntaje_medio,pct_oxidos_Fe,pct_basalto,pct_sulfatos_Fe,pct_carbonatos,qi_medio
+lava_pinacate,1197,0.6373,52.8288,2.8808,0.019,14.2975,1.0078
+dunas_altar,1750,0.6928,84.5214,1.0693,0.0,3.4631,1.0319
