@@ -1,0 +1,49 @@
+region,zona,criterio,peso,objetivo_marte,coincidencia_pct,puntos_perdidos,valor_tierra
+pinacate,region_completa,oxidos_Fe,3,dominante,85.24,3.41,66.1 % píxeles EMIT
+pinacate,region_completa,cuarzo,3,ausente,60.77,9.05,QI 1.0145
+pinacate,region_completa,basalto,2,presente,24.96,11.55,3.6 % píxeles EMIT
+pinacate,region_completa,carbonatos,2,ausente,56.9,6.63,24.2 % píxeles EMIT
+pinacate,region_completa,arcillas_FeMg,2,ausente,82.1,2.75,5.4 % píxeles EMIT
+pinacate,region_completa,arcillas_Al,1,traza,59.22,3.14,53.3 % píxeles EMIT
+pinacate,lava_pinacate,oxidos_Fe,3,dominante,84.55,3.56,56.2 % píxeles EMIT
+pinacate,lava_pinacate,cuarzo,3,ausente,92.01,1.84,QI 1.0019
+pinacate,lava_pinacate,basalto,2,presente,28.5,11.0,1.8 % píxeles EMIT
+pinacate,lava_pinacate,carbonatos,2,ausente,54.06,7.07,12.5 % píxeles EMIT
+pinacate,lava_pinacate,arcillas_FeMg,2,ausente,32.16,10.44,42.1 % píxeles EMIT
+pinacate,lava_pinacate,arcillas_Al,1,traza,61.92,2.93,22.3 % píxeles EMIT
+pinacate,dunas_altar,oxidos_Fe,3,dominante,98.34,0.38,84.5 % píxeles EMIT
+pinacate,dunas_altar,cuarzo,3,ausente,24.26,17.48,QI 1.0319
+pinacate,dunas_altar,basalto,2,presente,11.49,13.62,1.1 % píxeles EMIT
+pinacate,dunas_altar,carbonatos,2,ausente,83.43,2.55,3.5 % píxeles EMIT
+pinacate,dunas_altar,arcillas_FeMg,2,ausente,99.11,0.14,0.0 % píxeles EMIT
+pinacate,dunas_altar,arcillas_Al,1,traza,50.29,3.82,93.5 % píxeles EMIT
+pinacate,top10,oxidos_Fe,3,dominante,100.0,0.0,78.9 % píxeles EMIT
+pinacate,top10,cuarzo,3,ausente,100.0,0.0,QI 0.9977
+pinacate,top10,basalto,2,presente,100.0,0.0,1.6 % píxeles EMIT
+pinacate,top10,carbonatos,2,ausente,100.0,0.0,0.1 % píxeles EMIT
+pinacate,top10,arcillas_FeMg,2,ausente,100.0,0.0,0.0 % píxeles EMIT
+pinacate,top10,arcillas_Al,1,traza,85.0,1.15,35.0 % píxeles EMIT
+pinacate,mejor_celda,oxidos_Fe,3,dominante,100.0,0.0,97.2 % píxeles EMIT
+pinacate,mejor_celda,cuarzo,3,ausente,100.0,0.0,QI 0.9931
+pinacate,mejor_celda,basalto,2,presente,100.0,0.0,0.6 % píxeles EMIT
+pinacate,mejor_celda,carbonatos,2,ausente,100.0,0.0,0.3 % píxeles EMIT
+pinacate,mejor_celda,arcillas_FeMg,2,ausente,100.0,0.0,0.0 % píxeles EMIT
+pinacate,mejor_celda,arcillas_Al,1,traza,100.0,0.0,0.9 % píxeles EMIT
+black_point,region_completa,oxidos_Fe,3,dominante,91.38,1.99,66.7 % píxeles EMIT
+black_point,region_completa,cuarzo,3,ausente,87.29,2.93,QI 1.0043
+black_point,region_completa,basalto,2,presente,23.06,11.84,1.6 % píxeles EMIT
+black_point,region_completa,carbonatos,2,ausente,4.29,14.72,81.3 % píxeles EMIT
+black_point,region_completa,arcillas_FeMg,2,ausente,85.79,2.19,2.3 % píxeles EMIT
+black_point,region_completa,arcillas_Al,1,traza,60.16,3.06,4.7 % píxeles EMIT
+black_point,top10,oxidos_Fe,3,dominante,100.0,0.0,40.0 % píxeles EMIT
+black_point,top10,cuarzo,3,ausente,100.0,0.0,QI 0.9952
+black_point,top10,basalto,2,presente,100.0,0.0,18.9 % píxeles EMIT
+black_point,top10,carbonatos,2,ausente,100.0,0.0,0.1 % píxeles EMIT
+black_point,top10,arcillas_FeMg,2,ausente,100.0,0.0,0.0 % píxeles EMIT
+black_point,top10,arcillas_Al,1,traza,55.0,3.46,91.6 % píxeles EMIT
+black_point,mejor_celda,oxidos_Fe,3,dominante,100.0,0.0,32.7 % píxeles EMIT
+black_point,mejor_celda,cuarzo,3,ausente,100.0,0.0,QI 1.0087
+black_point,mejor_celda,basalto,2,presente,100.0,0.0,5.0 % píxeles EMIT
+black_point,mejor_celda,carbonatos,2,ausente,100.0,0.0,0.5 % píxeles EMIT
+black_point,mejor_celda,arcillas_FeMg,2,ausente,100.0,0.0,0.5 % píxeles EMIT
+black_point,mejor_celda,arcillas_Al,1,traza,100.0,0.0,18.2 % píxeles EMIT
