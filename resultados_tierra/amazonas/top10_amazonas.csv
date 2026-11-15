@@ -1,0 +1,11 @@
+rango,lat_centro,lon_centro,puntaje,mi,qi,pct_oxidos_Fe,pct_agua,explicacion
+1,-4.735,-66.745,0.7857,0.9836,1.0089,0.5848,9.6847,"coincide: cuarzo, basalto, carbonatos, micas_felsicas | no coincide: oxidos_Fe, arcillas_FeMg, arcillas_Al"
+2,-4.115,-66.345,0.75,1.0663,1.0053,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
+3,-4.675,-66.395,0.75,1.0559,1.0069,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
+4,-4.115,-66.355,0.75,1.0435,0.9798,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
+5,-4.665,-66.395,0.75,1.0371,1.0031,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
+6,-4.685,-66.385,0.75,1.0316,1.0067,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
+7,-4.695,-66.395,0.75,1.0295,1.0059,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
+8,-4.835,-66.445,0.75,1.0277,1.0009,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
+9,-4.415,-66.555,0.75,1.0272,1.0016,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
+10,-4.295,-66.465,0.75,1.0251,1.0078,0.0,0.0,"coincide: cuarzo, basalto, carbonatos, arcillas_FeMg, micas_felsicas | no coincide: oxidos_Fe, arcillas_Al"
