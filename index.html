@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soil Analog Comparison · Mars and Earth</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="space">
+  <canvas id="stars" class="stars" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <ellipse cx="12" cy="12" rx="10" ry="3.6" fill="none" stroke="currentColor" stroke-width="1" transform="rotate(-18 12 12)"/>
+      </svg>
+      <span class="brand-name">Soil Analog Comparison</span>
+    </div>
+    <div class="topbar-right">
+      <span>Space Apps 2026</span>
+      <span class="sep">|</span>
+      <span>Prototype</span>
+    </div>
+  </header>
+
+  <aside class="panel steps" aria-label="Selection steps">
+    <h2 class="panel-title">Mission selection</h2>
+
+    <div class="step" id="stepMars">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <div class="step-label">Mars zone</div>
+        <div class="step-value empty" id="marsSel">Not selected</div>
+      </div>
+    </div>
+
+    <div class="step locked" id="stepEarth">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <div class="step-label">Earth site</div>
+        <div class="step-value empty" id="earthSel">Not selected</div>
+      </div>
+    </div>
+
+    <a class="cta" id="compareBtn" href="#" aria-disabled="true">Run comparison</a>
+    <p class="fine">Select a zone on Mars, then a site on Earth. Hover a target to see its location.</p>
+  </aside>
+
+  <aside class="panel readout" aria-live="polite">
+    <h2 class="panel-title">Target</h2>
+    <div class="readout-body is-idle" id="readout">
+      <div class="r-media" id="rMedia" hidden><img id="rImg" alt=""></div>
+      <div class="r-title">No target</div>
+      <div class="r-sub">Move the cursor over a zone or site</div>
+    </div>
+  </aside>
+
+  <main>
+    <section class="world-section mars-section" aria-label="Mars">
+      <figure class="planet mars">
+        <div class="glow"></div>
+        <canvas id="marsCanvas" aria-label="Mars globe"></canvas>
+      </figure>
+      <div class="zoom">
+        <button type="button" data-zoom="mars" data-dir="in" aria-label="Zoom in on Mars">+</button>
+        <button type="button" data-zoom="mars" data-dir="out" aria-label="Zoom out on Mars">−</button>
+      </div>
+      <div class="world-label">
+        <span class="cap-key">01 · Mars</span>
+        <span class="cap-val">Meridiani Planum</span>
+      </div>
+      <div class="scroll-hint">Scroll for Earth ↓</div>
+    </section>
+
+    <section class="world-section earth-section" id="earthFigure" aria-label="Earth">
+      <figure class="planet earth">
+        <div class="glow"></div>
+        <canvas id="earthCanvas" aria-label="Earth globe"></canvas>
+      </figure>
+      <div class="zoom">
+        <button type="button" data-zoom="earth" data-dir="in" aria-label="Zoom in on Earth">+</button>
+        <button type="button" data-zoom="earth" data-dir="out" aria-label="Zoom out on Earth">−</button>
+      </div>
+      <div class="world-label">
+        <span class="cap-key">02 · Earth</span>
+        <span class="cap-val">Reference sites</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/textures.js"></script>
+  <script src="data.js"></script>
+  <script src="globe.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

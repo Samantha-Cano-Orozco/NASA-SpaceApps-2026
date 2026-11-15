@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparison · Soil Analog Comparison</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <ellipse cx="12" cy="12" rx="10" ry="3.6" fill="none" stroke="currentColor" stroke-width="1" transform="rotate(-18 12 12)"/>
+      </svg>
+      <span class="brand-name">Soil Analog Comparison</span>
+    </div>
+    <div class="topbar-right"><span>Space Apps 2026</span><span class="sep">|</span><span>Prototype</span></div>
+  </header>
+
+  <div class="page-head">
+    <div>
+      <p class="kicker">Head to head</p>
+      <h1 id="title"></h1>
+    </div>
+    <a class="back" href="index.html">← Back to selection</a>
+  </div>
+
+  <main class="wrap">
+
+    <!-- Main statistics: Earth on the left, Mars on the right, statistics in between -->
+    <section class="versus" aria-label="Main statistics">
+      <div class="versus-top">
+        <div class="side earth">
+          <canvas id="earthGlobe" aria-label="Earth site"></canvas>
+          <h2 id="earthName"></h2>
+          <p class="place" id="earthPlace"></p>
+        </div>
+
+        <div class="centre">
+          <p class="c-label">Mineral similarity · full region</p>
+          <p class="c-big" id="simBig"></p>
+          <p class="c-sub" id="simSub"></p>
+        </div>
+
+        <div class="side mars">
+          <canvas id="marsGlobe" aria-label="Mars zone"></canvas>
+          <h2 id="marsName"></h2>
+          <p class="place" id="marsPlace"></p>
+        </div>
+      </div>
+
+      <div class="mainbar">
+        <div class="mb-head">
+          <span class="mb-label">Overall similarity</span>
+          <span class="mb-value" id="mbValue"></span>
+        </div>
+        <div class="mb-track"><div class="mb-fill" id="mbFill"></div></div>
+        <p class="mb-sub" id="mbSub"></p>
+      </div>
+
+      <div class="versus-rows" id="versusRows"></div>
+    </section>
+
+    <!-- Other statistics -->
+    <section class="sec">
+      <h2>Criteria · full region <span class="note">Weight 1–3 · points lost add up to 100 − similarity</span></h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Criterion</th><th>Mars target</th><th>Measured on Earth</th>
+              <th class="n">Weight</th><th class="n">Match</th><th class="n">Points lost</th>
+            </tr>
+          </thead>
+          <tbody id="criteriaRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="two">
+      <section class="sec">
+        <h2>Composition <span class="note" id="compNote"></span></h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>Mars</th><th class="n" id="compEarth"></th></tr></thead>
+            <tbody id="compRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="sec">
+        <h2>Surface conditions</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody id="condRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <section class="sec">
+      <h2>Mineral groups · EMIT <span class="note">Share of all detections in the region</span></h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Group</th><th class="n">Share</th><th class="n">Minerals mapped</th><th class="n">Flagged for review</th></tr>
+          </thead>
+          <tbody id="emitRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>Terrain · full table <span class="note">Slope and roughness from 30 m DEM data</span></h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Metric</th><th class="n">Victoria</th><th class="n" id="tSiteHead"></th><th class="n">Difference</th><th class="n">Relative difference</th></tr>
+          </thead>
+          <tbody id="terrainRows"></tbody>
+        </table>
+      </div>
+      <p class="tline" id="tLine"></p>
+      <ul class="notes" id="terrainNotes" style="margin-top:12px"></ul>
+    </section>
+
+    <section class="sec">
+      <h2>Similarity summary</h2>
+      <div class="table-wrap">
+        <table>
+          <tbody id="simRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec">
+      <h2>Observations</h2>
+      <ul class="notes" id="notes"></ul>
+    </section>
+
+    <section class="sec">
+      <h2>Mars reference signals <span class="note">CRISM surface and TES regional background</span></h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Source</th><th>Mineral or group</th><th>Level</th><th>Unit</th><th class="n">Value</th></tr></thead>
+          <tbody id="marsRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec method">
+      <h2>Method</h2>
+      <p><strong>Match.</strong> For each criterion, the share of valid cells whose measured value agrees with the Mars target. Dominant, present and trace targets agree with a detected value; an absent target agrees with a non-detected value.</p>
+      <div class="formula">match = agreeing cells ÷ valid cells</div>
+      <p><strong>Similarity.</strong> Weighted mean of the seven criterion matches.</p>
+      <div class="formula">similarity = Σ (weight × match) ÷ Σ weight</div>
+      <p><strong>Points lost.</strong> Each criterion's share of the gap to 100%.</p>
+      <div class="formula">points lost = weight × (100 − match) ÷ Σ weight</div>
+      <p>The points lost add up to 100 − similarity.</p>
+      <p><strong>Data.</strong> Values come from processed EMIT, ASTER, CRISM and TES products. Mineral groups are assigned automatically; entries marked for review have not been checked by hand. The Mars side is one reference zone, and the Earth sites are not field measurements.</p>
+    </section>
+
+    <p class="footnote">Values are reproduced from the processed results. No new measurements are made.</p>
+  </main>
+
+  <script src="assets/textures.js"></script>
+  <script src="data.js"></script>
+  <script src="globe.js"></script>
+  <script src="compare.js"></script>
+</body>
+</html>
