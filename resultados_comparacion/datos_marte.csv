@@ -1,0 +1,17 @@
+﻿Fuente,Grupo / mineral,Índice,Nivel en Marte,Unidad,Valor combinado,Máximo en una escena,frt0000334d_07,frt000095b8_07,frt0000b6b5_07,frt0000ce1d_07,Escena que lo detecta,Umbral original,Umbral final (≥ 0),Valor del píxel central,Desviación estándar 3×3,Percentil global (todo Marte),% de Marte con valor 0
+CRISM · superficie (4 escenas),Óxidos de Fe (férricos),BD530_2,dominante,mediana del índice BD530_2,0.181,0.2045,0.1879,0.2045,0.1777,0.1535,frt0000334d_07;frt000095b8_07;frt0000b6b5_07;frt0000ce1d_07,,,,,,
+CRISM · superficie (4 escenas),Arcillas Fe/Mg,D2300,ausente,% del área sobre el umbral,0.0003,0.0013,0.0,0.0,0.0013,0.0,,0.0087,0.0087,,,,
+CRISM · superficie (4 escenas),Arcillas Al,BD2210_2,traza,% del área sobre el umbral,0.3035,1.0099,0.0426,0.0,0.1616,1.0099,frt0000ce1d_07,0.0051,0.0051,,,,
+CRISM · superficie (4 escenas),Carbonatos de Mg,MIN2295_2480,ausente,% del área sobre el umbral,0.0,0.0,0.0,0.0,0.0,0.0,,-0.0011,0.0,,,,
+CRISM · superficie (4 escenas),Carbonatos de Fe/Ca,MIN2345_2537,ausente,% del área sobre el umbral,0.0,0.0,0.0,0.0,0.0,0.0,,0.0038,0.0038,,,,
+CRISM · superficie (4 escenas),Hidratación (agua en minerales),BD1900_2,ausente,% del área sobre el umbral,0.0446,0.177,0.0,0.0,0.0016,0.177,,0.0106,0.0106,,,,
+CRISM · superficie (4 escenas),Sulfatos polihidratados,SINDEX2,ausente,% del área sobre el umbral,0.026,0.0916,0.0,0.0,0.0125,0.0916,,0.0166,0.0166,,,,
+CRISM · superficie (4 escenas),Olivino,OLINDEX3,ausente,% del área sobre el umbral,0.1222,0.2416,0.2416,0.0021,0.1991,0.0458,,0.0832,0.0832,,,,
+CRISM · superficie (4 escenas),Piroxeno bajo en Ca,LCPINDEX2,ausente,% del área sobre el umbral,0.0,0.0,0.0,0.0,0.0,0.0,,-0.0107,0.0,,,,
+CRISM · superficie (4 escenas),Piroxeno alto en Ca,HCPINDEX2,ausente,% del área sobre el umbral,0.0011,0.0026,0.0,0.0026,0.0016,0.0,,-0.0059,0.0,,,,
+"TES · fondo regional (cráter Victoria, 3×3 píxeles ≈ 45 km)",Hematita,,detectado,% del área (abundancia),14.2418,,,,,,,,,11.1969,2.1636,99.9441,69.5954
+"TES · fondo regional (cráter Victoria, 3×3 píxeles ≈ 45 km)",Plagioclasa,,detectado,% del área (abundancia),8.7606,,,,,,,,,8.6273,2.3818,67.627,23.4281
+"TES · fondo regional (cráter Victoria, 3×3 píxeles ≈ 45 km)",Piroxeno alto en Ca,,detectado,% del área (abundancia),5.1818,,,,,,,,,9.1865,4.2679,89.5986,44.9782
+"TES · fondo regional (cráter Victoria, 3×3 píxeles ≈ 45 km)",Polvo,,no detectado,índice relativo (sin unidades),0.0,,,,,,,,,0.0,0.0,16.6076,33.2153
+"TES · fondo regional (cráter Victoria, 3×3 píxeles ≈ 45 km)",Cuarzo,,no detectado,% del área (abundancia),0.0,,,,,,,,,0.0,0.0,41.7932,83.5864
+"TES · fondo regional (cráter Victoria, 3×3 píxeles ≈ 45 km)",Error RMS del ajuste,,calidad del ajuste,emisividad,0.0024,,,,,,,,,,,,

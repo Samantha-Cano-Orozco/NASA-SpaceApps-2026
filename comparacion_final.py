@@ -24,8 +24,13 @@ SALIDAS (una carpeta por región: resultados_comparacion/<region>/)
     criterios_<region>.csv      por criterio y zona: objetivo de Marte, valor en la Tierra, % de coincidencia,
                                 puntos perdidos
     composicion_<region>.csv    composición EMIT/ASTER de la región junto a la huella de Marte
-    top10_<region>.csv          las 10 celdas más parecidas, con sus datos
+    top10_<region>.csv          las 10 celdas más parecidas, con sus datos y avisos automáticos
     comparacion_<region>.png    figura
+    Y un libro de Excel con todo junto: resultados_comparacion/comparacion_final.xlsx
+        Resumen   las regiones lado a lado (similitud, criterios, composición)
+        <Región>  una hoja por región con sus datos individuales
+        Marte     la huella de Meridiani usada
+        Notas     cómo leer los datos y de dónde salen
 """
 import argparse
 from pathlib import Path
@@ -54,6 +59,41 @@ OBJETIVO_TXT = {"oxidos_Fe": "dominante", "cuarzo": "ausente", "basalto": "prese
                 "arcillas_FeMg": "ausente", "arcillas_Al": "traza", "micas_felsicas": "ausente"}
 ETIQUETA = {"oxidos_Fe": "Óxidos de Fe", "cuarzo": "Cuarzo", "basalto": "Basalto", "carbonatos": "Carbonatos",
             "arcillas_FeMg": "Arcillas Fe/Mg", "arcillas_Al": "Arcillas Al", "micas_felsicas": "Micas félsicas"}
+# Observaciones de la revisión manual de cada región (se copian a su hoja del Excel)
+NOTAS_MANUALES = {
+    "pinacate": [
+        "Dato principal para presentar: campo de lava (lava_pinacate). Las dunas son el contraste.",
+        "7 de las 10 mejores celdas están entre San Luis Río Colorado y Yuma (~30 m, terreno plano, 66–100 % "
+        "micas): zona de cultivos de riego del valle del río Colorado. Verificar en imagen satelital.",
+    ],
+    "black_point": [
+        "Los datos cubren el cuadro n36w115 (lago Mead / Las Vegas, Nevada), NO el derrame de lava Black Point "
+        "de Arizona (~35.7°N, 111.4°O). Confirmar con el equipo qué región se quería.",
+        "Carbonatos en ~78 % de los píxeles: calizas de la zona. Es la mayor diferencia con Marte.",
+        "La mitad del top 10 cae en la ciudad de Henderson (terreno plano); la otra mitad en las River Mountains "
+        "(volcánicas, con pendiente). Verificar en imagen satelital.",
+    ],
+    "desierto_diablo": [
+        "9 de las 10 mejores celdas son una sola planicie a ~3 471 m con índice máfico > 1 (inusual para "
+        "basalto): podría ser costra salina o sedimento fino. Verificar en imagen satelital.",
+    ],
+}
+
+
+def avisos_celda(r):
+    """Señales automáticas para revisar una celda del top 10."""
+    a = []
+    if r["pct_micas_felsicas"] > 50:
+        a.append("micas > 50 %")
+    if r["mi"] > 1.0:
+        a.append("MI > 1 (inusual para basalto)")
+    if r["elev_media_m"] < 50 and r["pendiente_media_deg"] < 3:
+        a.append("planicie baja (< 50 m)")
+    if r["pct_sulfatos_Fe"] > 10:
+        a.append("sulfatos de Fe > 10 %")
+    if r["pct_oxidos_Fe"] < 40:
+        a.append("óxidos de Fe < 40 %")
+    return "; ".join(a)
 
 
 def detectar_version(c):
@@ -159,6 +199,7 @@ def comparar(region, dir_tierra, huella, salida):
     top = c.head(10)[["rango", "lat_centro", "lon_centro", "puntaje", "pct_oxidos_Fe", "qi", "mi",
                       "pct_carbonatos", "pct_arcillas_FeMg", "pct_arcillas_Al", "pct_micas_felsicas",
                       "pct_sulfatos_Fe", "pct_agua", "elev_media_m", "pendiente_media_deg"]].round(3)
+    top["avisos"] = top.apply(avisos_celda, axis=1)
 
     total.to_csv(out / f"similitud_{region}.csv", index=False)
     criterios.to_csv(out / f"criterios_{region}.csv", index=False)
@@ -184,6 +225,258 @@ def comparar(region, dir_tierra, huella, salida):
     print("\n--- Top 10 ---")
     print(top.to_string(index=False))
     print(f"\nArchivos en {out.resolve()}")
+    return {"total": total, "criterios": criterios, "comp": comp, "top": top, "version": nombre_v,
+            "n_celdas": len(c), "pesos": pesos}
+
+
+DATO_TXT = {
+    "lat / lon": "Ubicación (lat / lon)", "elev_media_m": "Elevación media (m)", "celdas_validas": "Celdas válidas",
+    "pct_oxidos_Fe": "Óxidos de Fe (% píxeles)", "pct_oxidos_finos_de_los_oxidos": "Óxidos finos (% de los óxidos)",
+    "pct_carbonatos": "Carbonatos (% píxeles)", "pct_arcillas_FeMg": "Arcillas Fe/Mg (% píxeles)",
+    "pct_arcillas_Al": "Arcillas Al (% píxeles)", "pct_micas_felsicas": "Micas félsicas (% píxeles)",
+    "pct_basalto_EMIT": "Basalto según EMIT (% píxeles)", "pct_sulfatos_Fe": "Sulfatos de Fe (% píxeles)",
+    "pct_yeso_sulfatos": "Yeso y sulfatos (% píxeles)", "indice_cuarzo_medio": "Índice de cuarzo medio (ASTER)",
+    "indice_mafico_medio": "Índice máfico medio (ASTER)",
+    "pct_celdas_basalto_aster": "Celdas basálticas según ASTER (%)",
+}
+
+
+def numero(v):
+    """'63.1052' -> 63.1052 ; texto -> texto."""
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return v
+
+
+def escribir_excel(res, huella, ruta):
+    """Libro con una hoja de resumen, una por región, la huella de Marte y notas."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+    from openpyxl.utils import get_column_letter as L
+
+    FUENTE = "Arial"
+    f_tit = Font(name=FUENTE, size=14, bold=True)
+    f_sub = Font(name=FUENTE, size=11, bold=True)
+    f_head = Font(name=FUENTE, size=10, bold=True, color="FFFFFF")
+    f_txt = Font(name=FUENTE, size=10)
+    f_dato = Font(name=FUENTE, size=10, color="0000FF")      # azul: dato calculado en Python desde los CSV
+    f_form = Font(name=FUENTE, size=10, color="000000")      # negro: fórmula de Excel
+    f_nota = Font(name=FUENTE, size=9, italic=True, color="52514E")
+    relleno_head = PatternFill("solid", fgColor="1C5CAB")
+    relleno_total = PatternFill("solid", fgColor="E6EEF8")
+    borde = Border(bottom=Side(style="thin", color="D0CFCA"))
+    PCT, NUM1, NUM3, NUM4 = "0.0%", "0.0", "0.000", "0.0000"
+    nombre = lambda s: s.replace("_", " ")
+
+    def encabezado(ws, fila, col, textos):
+        for j, t in enumerate(textos):
+            cel = ws.cell(fila, col + j, t)
+            cel.font, cel.fill = f_head, relleno_head
+            cel.alignment = Alignment(wrap_text=True, vertical="center", horizontal="center")
+        ws.row_dimensions[fila].height = 30
+
+    def celda(ws, fila, col, valor, fmt=None, fuente=None):
+        v = numero(valor) if not (isinstance(valor, str) and valor.startswith("=")) else valor
+        cel = ws.cell(fila, col, v)
+        es_form = isinstance(v, str) and v.startswith("=")
+        cel.font = fuente or (f_form if es_form else (f_dato if isinstance(v, (int, float)) else f_txt))
+        if fmt and (es_form or isinstance(v, (int, float))):
+            cel.number_format = fmt
+        cel.border = borde
+        return cel
+
+    def titulo(ws, fila, texto, fuente=f_sub):
+        ws.cell(fila, 1, texto).font = fuente
+        return fila + 1
+
+    def tabla(ws, fila, df, formatos=None):
+        formatos = formatos or {}
+        encabezado(ws, fila, 1, list(df.columns))
+        for i, (_, r) in enumerate(df.iterrows(), start=1):
+            for j, col in enumerate(df.columns, start=1):
+                celda(ws, fila + i, j, r[col], formatos.get(col))
+        return fila + len(df) + 2
+
+    def anchos(ws, anchos_col):
+        for j, a in enumerate(anchos_col, start=1):
+            ws.column_dimensions[L(j)].width = a
+
+    wb = Workbook()
+    regiones = list(res)
+
+    # ---------------- RESUMEN ----------------
+    ws = wb.active
+    ws.title = "Resumen"
+    f = titulo(ws, 1, "Comparación mineralógica: regiones de la Tierra vs Meridiani Planum (Marte)", f_tit)
+    ws.cell(f, 1, "Cada región se compara con Marte por separado. Detalle en la hoja de cada región; "
+                  "cómo leer los datos en 'Notas'.").font = f_nota
+    f += 2
+
+    f = titulo(ws, f, "1. Similitud con Meridiani por región y zona")
+    sim = pd.concat([r["total"].assign(region=nombre(k).title()) for k, r in res.items()])
+    sim = sim[["region", "zona", "n_celdas", "similitud_pct", "similitud_mediana_pct", "pct_celdas_sim_ge_80",
+               "lat", "lon", "elev_mediana_m"]].copy()
+    for col in ("similitud_pct", "similitud_mediana_pct", "pct_celdas_sim_ge_80"):
+        sim[col] = sim[col] / 100
+    sim["zona"] = sim["zona"].map(nombre)
+    sim.columns = ["Región", "Zona", "Celdas", "Similitud media", "Similitud mediana", "Celdas con similitud ≥ 80 %",
+                   "Lat. media", "Lon. media", "Elevación mediana (m)"]
+    f = tabla(ws, f, sim, {"Celdas": "#,##0", "Similitud media": PCT, "Similitud mediana": PCT,
+                           "Celdas con similitud ≥ 80 %": PCT, "Lat. media": "0.00", "Lon. media": "0.00",
+                           "Elevación mediana (m)": "#,##0"})
+
+    f = titulo(ws, f, "2. Coincidencia por criterio (región completa) y puntos de similitud que se pierden")
+    crits = list(res[regiones[0]]["pesos"])
+    cab = ["Criterio", "Peso", "Objetivo en Marte"] + [f"{nombre(r).title()}\ncoincidencia" for r in regiones] \
+          + [f"{nombre(r).title()}\npuntos perdidos" for r in regiones]
+    encabezado(ws, f, 1, cab)
+    f0 = f + 1
+    nreg = len(regiones)
+    for i, k in enumerate(crits):
+        fila = f0 + i
+        celda(ws, fila, 1, ETIQUETA[k]); celda(ws, fila, 2, res[regiones[0]]["pesos"][k], "0")
+        celda(ws, fila, 3, OBJETIVO_TXT[k])
+        for j, r in enumerate(regiones):
+            g = res[r]["criterios"]
+            v = g[(g["zona"] == "region_completa") & (g["criterio"] == k)]["coincidencia_pct"].item() / 100
+            celda(ws, fila, 4 + j, v, PCT)
+            cc = f"{L(4 + j)}{fila}"
+            celda(ws, fila, 4 + nreg + j, f"=$B{fila}*(1-{cc})/SUM($B${f0}:$B${f0 + len(crits) - 1})", PCT)
+    ft = f0 + len(crits)
+    celda(ws, ft, 1, "Similitud = 100 % − Σ puntos perdidos", fuente=Font(name=FUENTE, size=10, bold=True))
+    for j in range(nreg):
+        col = L(4 + nreg + j)
+        c = celda(ws, ft, 4 + nreg + j, f"=1-SUM({col}{f0}:{col}{ft - 1})", PCT)
+        c.fill = relleno_total
+    f = ft + 3
+
+    f = titulo(ws, f, "3. Composición de cada región junto a la huella de Marte")
+    comp = pd.concat([res[regiones[0]]["comp"][["marte_meridiani"]]]
+                     + [res[r]["comp"][[r]] for r in regiones], axis=1).reset_index()
+    comp.columns = ["Dato", "Marte (Meridiani)"] + [nombre(r).title() for r in regiones]
+    comp["Dato"] = comp["Dato"].map(lambda x: DATO_TXT.get(x, x))
+    f = tabla(ws, f, comp, {nombre(r).title(): "0.00##" for r in regiones})
+    ws.cell(f - 1, 1, "Porcentajes de la Tierra = % de píxeles EMIT con detección del grupo; índices = ASTER.").font = f_nota
+    anchos(ws, [38, 20, 44] + [18] * (2 * nreg))
+    ws.freeze_panes = "A4"
+
+    # ---------------- UNA HOJA POR REGIÓN ----------------
+    for r in regiones:
+        d = res[r]
+        ws = wb.create_sheet(nombre(r).title()[:31])
+        f = titulo(ws, 1, f"{nombre(r).title()} vs Meridiani Planum (Marte)", f_tit)
+        for txt in (f"Celdas válidas de ~1 km: {d['n_celdas']:,}",
+                    f"Versión de minerologia2.py: {d['version']} (puntaje verificado)",
+                    f"Ubicación (lat / lon): {d['comp'].loc['lat / lon', r]}  ·  "
+                    f"elevación media: {numero(d['comp'].loc['elev_media_m', r]):,.0f} m"):
+            ws.cell(f, 1, txt).font = f_txt; f += 1
+        f += 1
+
+        f = titulo(ws, f, "1. Similitud por zona")
+        t = d["total"].copy()
+        for col in ("similitud_pct", "similitud_mediana_pct", "pct_celdas_sim_ge_80"):
+            t[col] = t[col] / 100
+        t["zona"] = t["zona"].map(nombre)
+        t.columns = ["Zona", "Celdas", "Similitud media", "Similitud mediana", "Celdas con similitud ≥ 80 %",
+                     "Lat. media", "Lon. media", "Elevación mediana (m)"]
+        f = tabla(ws, f, t, {"Celdas": "#,##0", "Similitud media": PCT, "Similitud mediana": PCT,
+                             "Celdas con similitud ≥ 80 %": PCT, "Lat. media": "0.00", "Lon. media": "0.00",
+                             "Elevación mediana (m)": "#,##0"})
+
+        f = titulo(ws, f, "2. Criterio por criterio: coincidencia con Marte y puntos de similitud que se pierden")
+        zonas = list(d["total"]["zona"])
+        g = d["criterios"]
+        cab = ["Criterio", "Peso", "Objetivo en Marte", "Valor en la Tierra (región completa)"]
+        for z in zonas:
+            cab += [f"{nombre(z)}\ncoincidencia", f"{nombre(z)}\npuntos perdidos"]
+        encabezado(ws, f, 1, cab)
+        f0 = f + 1
+        for i, k in enumerate(d["pesos"]):
+            fila = f0 + i
+            celda(ws, fila, 1, ETIQUETA[k]); celda(ws, fila, 2, d["pesos"][k], "0")
+            celda(ws, fila, 3, OBJETIVO_TXT[k])
+            celda(ws, fila, 4, g[(g["zona"] == "region_completa") & (g["criterio"] == k)]["valor_tierra"].item())
+            for j, z in enumerate(zonas):
+                cc = 5 + 2 * j
+                v = g[(g["zona"] == z) & (g["criterio"] == k)]["coincidencia_pct"].item() / 100
+                celda(ws, fila, cc, v, PCT)
+                celda(ws, fila, cc + 1,
+                      f"=$B{fila}*(1-{L(cc)}{fila})/SUM($B${f0}:$B${f0 + len(d['pesos']) - 1})", PCT)
+        ft = f0 + len(d["pesos"])
+        celda(ws, ft, 1, "Similitud = 100 % − Σ puntos perdidos", fuente=Font(name=FUENTE, size=10, bold=True))
+        celda(ws, ft + 1, 1, "Similitud media (del CSV, para comparar)", fuente=f_nota)
+        for j, z in enumerate(zonas):
+            col = L(6 + 2 * j)
+            c = celda(ws, ft, 6 + 2 * j, f"=1-SUM({col}{f0}:{col}{ft - 1})", PCT)
+            c.fill = relleno_total
+            celda(ws, ft + 1, 6 + 2 * j, d["total"].loc[d["total"]["zona"] == z, "similitud_pct"].item() / 100, PCT)
+        f = ft + 3
+
+        f = titulo(ws, f, "3. Composición: Marte vs región")
+        cp = d["comp"].reset_index()
+        cp.columns = ["Dato", "Marte (Meridiani)", nombre(r).title()]
+        cp["Dato"] = cp["Dato"].map(lambda x: DATO_TXT.get(x, x))
+        f = tabla(ws, f, cp, {nombre(r).title(): "0.00##"})
+
+        f = titulo(ws, f, "4. Las 10 celdas más parecidas a Meridiani")
+        tp = d["top"].copy()
+        tp["puntaje"] = tp["puntaje"]
+        tp.columns = ["Rango", "Lat.", "Lon.", "Similitud", "Óxidos de Fe (%)", "Índice de cuarzo (QI)",
+                      "Índice máfico (MI)", "Carbonatos (%)", "Arcillas Fe/Mg (%)", "Arcillas Al (%)",
+                      "Micas félsicas (%)", "Sulfatos de Fe (%)", "Agua (%)", "Elevación (m)", "Pendiente (°)",
+                      "Avisos automáticos"]
+        f_top = f
+        f = tabla(ws, f, tp, {"Lat.": "0.000", "Lon.": "0.000", "Similitud": PCT, "Óxidos de Fe (%)": NUM1,
+                              "Índice de cuarzo (QI)": NUM4, "Índice máfico (MI)": NUM3, "Carbonatos (%)": NUM1,
+                              "Arcillas Fe/Mg (%)": NUM1, "Arcillas Al (%)": NUM1, "Micas félsicas (%)": NUM1,
+                              "Sulfatos de Fe (%)": NUM1, "Agua (%)": NUM1, "Elevación (m)": "#,##0",
+                              "Pendiente (°)": NUM1})
+        ws.auto_filter.ref = f"A{f_top}:{L(len(tp.columns))}{f_top + len(tp)}"
+
+        f = titulo(ws, f, "5. Observaciones de la revisión")
+        for txt in NOTAS_MANUALES.get(r, ["Sin observaciones manuales; revisar el top 10 en imagen satelital."]):
+            c = ws.cell(f, 1, f"• {txt}"); c.font = f_txt; f += 1
+        anchos(ws, [40, 10, 18, 40] + [14] * 12)
+        ws.freeze_panes = "B2"
+
+    # ---------------- MARTE ----------------
+    ws = wb.create_sheet("Marte")
+    f = titulo(ws, 1, "Huella mineral de Meridiani Planum (huella_marte_final.csv)", f_tit)
+    ws.cell(f, 1, "superficie_CRISM: % del área sobre el umbral (4 escenas). fondo_TES: abundancia en el "
+                  "cráter Victoria (ventana 3×3).").font = f_nota
+    f += 2
+    hm = huella.copy()
+    f = tabla(ws, f, hm, {"pct_max_escena": "0.000", "intensidad": "0.000", "abundancia": "0.000",
+                          "abundancia_pct": NUM1, "std_3x3": "0.000", "percentil_global": NUM1,
+                          "rms_error": "0.0000"})
+    anchos(ws, [18, 20, 14, 26, 12, 14, 34, 12, 12, 14, 10, 16, 12, 14])
+
+    # ---------------- NOTAS ----------------
+    ws = wb.create_sheet("Notas")
+    f = titulo(ws, 1, "Cómo leer este libro", f_tit)
+    notas = [
+        "Similitud = puntaje de minerologia2.py × 100: suma ponderada de 7 criterios que comparan cada celda "
+        "de ~1 km con la huella de Meridiani (1 = coincide, 0.5 = parcial, 0 = no).",
+        "Coincidencia de un criterio = % promedio de coincidencia de las celdas de la zona en ese criterio.",
+        "Puntos perdidos = peso × (1 − coincidencia) / suma de pesos. Suman 100 % − similitud "
+        "(fila 'Similitud = 100 % − Σ puntos perdidos', calculada con fórmulas).",
+        "Porcentajes de la Tierra (óxidos, carbonatos, arcillas, micas...) = % de píxeles EMIT donde se detecta "
+        "el grupo. Marte (CRISM) = % de píxeles sobre el umbral. TES = abundancia. Se comparan NIVELES "
+        "(dominante / traza / ausente), no los porcentajes directamente.",
+        "Índice de cuarzo QI (ASTER) ≤ 1.010 = sin cuarzo. Índice máfico MI (ASTER) ≥ 0.970 = basalto.",
+        "Colores: azul = dato calculado en Python desde los CSV de minerologia2.py; negro = fórmula de Excel.",
+        "Fuentes: resultados_tierra/<region>/celdas_<region>.csv y resumen_region_<region>.csv "
+        "(minerologia2.py); huella_marte_final.csv (huella_marte_crism.ipynb). Generado con comparacion_final.py.",
+        "Las fórmulas se calculan al abrir el archivo en Excel (o LibreOffice / Google Sheets).",
+    ]
+    for t in notas:
+        c = ws.cell(f, 1, f"• {t}"); c.font = f_txt; c.alignment = Alignment(wrap_text=True, vertical="top")
+        ws.row_dimensions[f].height = 42; f += 1
+    ws.column_dimensions["A"].width = 130
+
+    wb.calculation.fullCalcOnLoad = True
+    wb.save(ruta)
 
 
 def figura(region, total, criterios, out):
@@ -258,5 +551,7 @@ if __name__ == "__main__":
         p.name for p in Path(a.tierra).iterdir() if p.is_dir() and (p / f"celdas_{p.name}.csv").exists())
     if not regiones:
         raise SystemExit(f"No encontré regiones en {Path(a.tierra).resolve()} (<region>/celdas_<region>.csv)")
-    for r in regiones:
-        comparar(r, a.tierra, huella, a.salida)
+    resultados = {r: comparar(r, a.tierra, huella, a.salida) for r in regiones}
+    ruta_xlsx = Path(a.salida) / "comparacion_final.xlsx"
+    escribir_excel(resultados, huella, ruta_xlsx)
+    print(f"\nExcel con los datos de cada región: {ruta_xlsx.resolve()}")
